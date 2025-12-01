@@ -1,13 +1,239 @@
+/* =========================================
+   PRICING PAGE STYLES
+   ========================================= */
+
+/* Hero Section */
+.pricing-hero {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  color: white;
+  padding: var(--spacing-4xl) 0;
+  text-align: center;
+}
+
+.pricing-hero .section-label {
+  color: var(--color-accent-light);
+}
+
+.pricing-hero h1 {
+  color: white;
+  font-size: var(--font-size-5xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.pricing-hero p {
+  font-size: var(--font-size-lg);
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Billing Toggle */
+.pricing-toggle-section {
+  padding: var(--spacing-xl) 0;
+}
+
+.pricing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-base);
+}
+
+.pricing-toggle span {
+  color: var(--color-text-light);
+  transition: var(--transition-fast);
+}
+
+.pricing-toggle span.active {
+  color: var(--color-text-heading);
+  font-weight: var(--font-weight-semibold);
+}
+
+.toggle-switch {
+  width: 52px;
+  height: 28px;
+  background: var(--color-border);
+  border-radius: var(--border-radius-full);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-base);
+}
+
+.toggle-switch.active {
+  background: var(--color-primary);
+}
+
+.toggle-knob {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-switch.active .toggle-knob {
+  left: 27px;
+}
+
+.save-badge {
+  background: var(--color-secondary);
+  color: white;
+  font-size: var(--font-size-xs);
+  padding: 2px 8px;
+  border-radius: var(--border-radius-full);
+  margin-left: var(--spacing-xs);
+}
+
+/* Pricing Cards */
+.pricing-cards-section {
+  padding-top: 0;
+}
+
+.pricing-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.pricing-card {
+  background: var(--color-bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  border: 2px solid var(--color-border-light);
+  transition: var(--transition-base);
+  position: relative;
+}
+
+.pricing-card:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-lg);
+}
+
+.pricing-card-popular {
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-xl);
+  z-index: 1;
+}
+
+.pricing-card-popular:hover {
+  transform: scale(1.05);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-accent);
+  color: white;
+  padding: 6px 16px;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.pricing-card-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.pricing-card-header h3 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-xs);
+}
+
+.pricing-target {
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+}
+
+.pricing-price {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.price-amount {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.price-period {
+  font-size: var(--font-size-base);
+  color: var(--color-text-light);
+}
+
+.pricing-features {
+  margin-bottom: var(--spacing-xl);
+}
+
+.pricing-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.pricing-features .check {
+  color: var(--color-secondary);
+  font-weight: bold;
+}
+
+.pricing-features .cross {
+  color: var(--color-text-light);
+}
+
+.pricing-note {
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xl);
+}
+
+/* Section Headers */
+.section-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto var(--spacing-2xl);
+}
+
+.section-label {
+  display: inline-block;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-sm);
+}
+
+.section-bg-alt {
+  background-color: var(--color-bg-alt);
+}
+
+/* Pricing Table */
 .pricing-table-wrapper {
   overflow-x: auto;
-  margin-bottom: var(--spacing-3xl);
+  margin-bottom: var(--spacing-2xl);
 }
 
 .pricing-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
 }
@@ -25,9 +251,17 @@
   color: var(--color-primary);
 }
 
+.pricing-table th.popular-column {
+  background-color: var(--color-bg-primary-subtle);
+}
+
+.pricing-table td.popular-column {
+  background-color: rgba(55, 48, 163, 0.03);
+}
+
 .pricing-table th .plan-price {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--color-text-light);
   font-weight: normal;
 }
 
@@ -42,8 +276,9 @@
 }
 
 .pricing-table .check {
-  color: green;
+  color: var(--color-secondary);
   font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .pricing-table .cross {
@@ -63,29 +298,105 @@
 }
 
 .faq-item {
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--spacing-md) 0;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-sm);
+  overflow: hidden;
+  transition: var(--transition-base);
+}
+
+.faq-item:hover {
+  border-color: var(--color-primary-light);
+}
+
+.faq-item.active {
+  border-color: var(--color-primary);
 }
 
 .faq-question {
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-white);
+  border: none;
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  text-align: left;
+  font-family: inherit;
+  color: var(--color-text-heading);
 }
 
 .faq-toggle {
   font-size: 1.5rem;
   color: var(--color-primary);
+  font-weight: normal;
 }
 
 .faq-answer {
-  margin-top: var(--spacing-sm);
+  padding: 0 var(--spacing-lg);
   color: var(--color-text-body);
-  display: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  line-height: var(--line-height-relaxed);
 }
 
 .faq-item.active .faq-answer {
-  display: block;
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
+  max-height: 500px;
+}
+
+/* CTA Section */
+.section-cta {
+  background: var(--color-bg-primary-subtle);
+  padding: var(--spacing-3xl) 0;
+}
+
+.section-cta h2 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.section-cta p {
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Full Width Utility */
+.full-width {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .pricing-cards-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .pricing-card-popular {
+    transform: none;
+  }
+  
+  .pricing-card-popular:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .pricing-hero h1 {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .pricing-table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .pricing-table th,
+  .pricing-table td {
+    padding: var(--spacing-sm);
+  }
 }

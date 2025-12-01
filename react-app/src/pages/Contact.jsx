@@ -52,8 +52,10 @@ export default function Contact() {
 
   return (
     <div className="contact-page">
-      <section className="section section-bg-light text-center">
+      {/* Hero Section */}
+      <section className="contact-hero">
         <div className="container">
+          <span className="section-label">Get in Touch</span>
           <h1>Contact Us</h1>
           <p>We'd love to hear from you. Book your free property audit today.</p>
         </div>
@@ -63,8 +65,9 @@ export default function Contact() {
         <div className="container">
           <div className="contact-grid">
             {/* Contact Form */}
-            <div className="card contact-form-card">
+            <div className="contact-form-card">
               <h2>Send us a message</h2>
+              <p className="form-intro">Fill out the form below and we'll get back to you within 24 hours.</p>
               
               {submitResult && (
                 <div className={`alert ${submitResult.success ? 'alert-success' : 'alert-error'}`}>
