@@ -1,0 +1,21 @@
+{
+  "name": "wiserdome-llp-app",
+  "version": "1.0.0",
+  "description": "Wiserdome Property Management - NRI Property Management in India",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "property-management",
+    "nri",
+    "real-estate",
+    "india"
+  ],
+  "author": "Wiserdome",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.86.0"
+  }
+}
