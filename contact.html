@@ -12,6 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/style.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -52,8 +54,7 @@
                 <!-- Contact Form -->
                 <div class="card">
                     <h2 style="margin-bottom: var(--spacing-lg);">Send us a message</h2>
-                    <form action="#" method="POST"
-                        onsubmit="event.preventDefault(); alert('Thank you! We will contact you shortly.');">
+                    <form id="contact-form" action="#" method="POST">
                         <div class="form-group">
                             <label for="name" class="form-label">Full Name</label>
                             <input type="text" id="name" class="form-input" required placeholder="John Doe">
@@ -168,6 +169,96 @@
         </div>
     </footer>
     <script src="js/main.js"></script>
+    <!-- Supabase Integration -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/data-service.js"></script>
+    <script>
+        // Initialize Supabase when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Supabase
+            if (window.SupabaseConfig) {
+                window.SupabaseConfig.init();
+            }
+
+            // Handle contact form submission
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    
+                    const submitButton = contactForm.querySelector('button[type="submit"]');
+                    const originalButtonText = submitButton.textContent;
+                    
+                    // Disable button and show loading state
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Sending...';
+                    
+                    // Collect form data
+                    const formData = {
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        city: document.getElementById('city').value,
+                        type: document.getElementById('type').value,
+                        message: document.getElementById('message').value
+                    };
+                    
+                    try {
+                        // Submit to Supabase
+                        const result = await window.WiserdomeData.submitContactInquiry(formData);
+                        
+                        if (result.success) {
+                            // Show success message
+                            alert(result.message);
+                            contactForm.reset();
+                        } else {
+                            // Show error message
+                            alert(result.message);
+                        }
+                    } catch (error) {
+                        console.error('Form submission error:', error);
+                        alert('An error occurred. Please try again.');
+                    } finally {
+                        // Re-enable button
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalButtonText;
+                    }
+                });
+            }
+
+            // Load cities dynamically
+            loadCities();
+        });
+
+        // Load cities into the dropdown
+        async function loadCities() {
+            const citySelect = document.getElementById('city');
+            if (!citySelect) return;
+
+            try {
+                const cities = await window.WiserdomeData.getCities();
+                
+                // Clear existing options except the first one
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                
+                // Add cities from database
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = window.WiserdomeData.cityNameToSlug(city.name);
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                });
+                
+                // Add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'other';
+                otherOption.textContent = 'Other';
+                citySelect.appendChild(otherOption);
+            } catch (error) {
+                console.error('Error loading cities:', error);
+            }
+        }
+    </script>
 </body>
 
 </html>

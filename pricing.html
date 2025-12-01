@@ -12,6 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/style.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .pricing-table {
             width: 100%;
@@ -253,16 +255,71 @@
         </div>
     </footer>
     <script src="js/main.js"></script>
+    <!-- Supabase Integration -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/data-service.js"></script>
     <script>
-        // Simple FAQ Toggle
-        document.querySelectorAll('.faq-question').forEach(item => {
-            item.addEventListener('click', () => {
-                const parent = item.parentElement;
-                parent.classList.toggle('active');
-                const toggle = item.querySelector('.faq-toggle');
-                toggle.textContent = parent.classList.contains('active') ? '-' : '+';
-            });
+        // Initialize Supabase and load data when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Supabase
+            if (window.SupabaseConfig) {
+                window.SupabaseConfig.init();
+            }
+
+            // Load FAQs dynamically
+            await loadFAQs();
         });
+
+        // Load FAQs from database
+        async function loadFAQs() {
+            const faqContainer = document.querySelector('.faq-item')?.parentElement;
+            if (!faqContainer) return;
+
+            try {
+                const faqs = await window.WiserdomeData.getFAQs();
+                
+                // Create a document fragment for efficient DOM manipulation
+                const fragment = document.createDocumentFragment();
+                
+                // Add FAQs from database
+                faqs.forEach(faq => {
+                    const faqItem = document.createElement('div');
+                    faqItem.className = 'faq-item';
+                    
+                    const question = document.createElement('div');
+                    question.className = 'faq-question';
+                    question.textContent = faq.question + ' ';
+                    
+                    const toggle = document.createElement('span');
+                    toggle.className = 'faq-toggle';
+                    toggle.textContent = '+';
+                    question.appendChild(toggle);
+                    
+                    const answer = document.createElement('div');
+                    answer.className = 'faq-answer';
+                    answer.textContent = faq.answer;
+                    
+                    faqItem.appendChild(question);
+                    faqItem.appendChild(answer);
+                    fragment.appendChild(faqItem);
+                });
+
+                // Clear and replace content efficiently
+                faqContainer.replaceChildren(fragment);
+
+                // Attach event listeners
+                document.querySelectorAll('.faq-question').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const parent = item.parentElement;
+                        parent.classList.toggle('active');
+                        const toggle = item.querySelector('.faq-toggle');
+                        toggle.textContent = parent.classList.contains('active') ? '-' : '+';
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading FAQs:', error);
+            }
+        }
     </script>
 </body>
 
