@@ -11,9 +11,15 @@
  * SECURITY NOTE:
  * The anon key is safe to expose in the browser as it only allows
  * access based on your Row Level Security (RLS) policies.
+ * 
+ * For production deployments, consider using a build process to inject
+ * environment variables or a separate configuration file that is not
+ * committed to version control.
  */
 
-// Supabase Configuration - Replace these with your actual Supabase project credentials
+// Supabase Configuration
+// Replace these placeholders with your actual Supabase project credentials
+// For production, consider using environment variables or a build process
 const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // e.g., 'https://your-project.supabase.co'
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 

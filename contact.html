@@ -244,7 +244,7 @@
                 // Add cities from database
                 cities.forEach(city => {
                     const option = document.createElement('option');
-                    option.value = city.name.toLowerCase().replace(/\s+/g, '-');
+                    option.value = window.WiserdomeData.cityNameToSlug(city.name);
                     option.textContent = city.name;
                     citySelect.appendChild(option);
                 });

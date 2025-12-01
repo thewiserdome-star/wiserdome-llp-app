@@ -278,21 +278,36 @@
             try {
                 const faqs = await window.WiserdomeData.getFAQs();
                 
-                // Clear existing FAQs
-                faqContainer.innerHTML = '';
+                // Create a document fragment for efficient DOM manipulation
+                const fragment = document.createDocumentFragment();
                 
                 // Add FAQs from database
                 faqs.forEach(faq => {
                     const faqItem = document.createElement('div');
                     faqItem.className = 'faq-item';
-                    faqItem.innerHTML = `
-                        <div class="faq-question">${faq.question} <span class="faq-toggle">+</span></div>
-                        <div class="faq-answer">${faq.answer}</div>
-                    `;
-                    faqContainer.appendChild(faqItem);
+                    
+                    const question = document.createElement('div');
+                    question.className = 'faq-question';
+                    question.textContent = faq.question + ' ';
+                    
+                    const toggle = document.createElement('span');
+                    toggle.className = 'faq-toggle';
+                    toggle.textContent = '+';
+                    question.appendChild(toggle);
+                    
+                    const answer = document.createElement('div');
+                    answer.className = 'faq-answer';
+                    answer.textContent = faq.answer;
+                    
+                    faqItem.appendChild(question);
+                    faqItem.appendChild(answer);
+                    fragment.appendChild(faqItem);
                 });
 
-                // Re-attach event listeners
+                // Clear and replace content efficiently
+                faqContainer.replaceChildren(fragment);
+
+                // Attach event listeners
                 document.querySelectorAll('.faq-question').forEach(item => {
                     item.addEventListener('click', () => {
                         const parent = item.parentElement;

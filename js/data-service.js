@@ -7,8 +7,12 @@
 
 const WiserdomeData = (function() {
     
-    // Get the Supabase client
-    function getClient() {
+    // Constants
+    const SUCCESS_MESSAGE = 'Thank you! We will contact you shortly.';
+    const ERROR_MESSAGE = 'An error occurred. Please try again.';
+    
+    // Get the Supabase client with configuration check
+    function getClientOrWarn() {
         if (!window.SupabaseConfig || !window.SupabaseConfig.isConfigured()) {
             console.warn('Supabase is not configured. Using static fallback data.');
             return null;
@@ -26,12 +30,12 @@ const WiserdomeData = (function() {
      * @returns {Promise<Object>} - Result of the operation
      */
     async function submitContactInquiry(data) {
-        const client = getClient();
+        const client = getClientOrWarn();
         
         if (!client) {
             // Fallback: Just log and show success (for development)
             console.log('Contact form submission (Supabase not configured):', data);
-            return { success: true, message: 'Thank you! We will contact you shortly.' };
+            return { success: true, message: SUCCESS_MESSAGE };
         }
 
         try {
@@ -49,13 +53,13 @@ const WiserdomeData = (function() {
 
             if (error) {
                 console.error('Error submitting contact inquiry:', error);
-                return { success: false, message: 'An error occurred. Please try again.' };
+                return { success: false, message: ERROR_MESSAGE };
             }
 
-            return { success: true, message: 'Thank you! We will contact you shortly.', data: result };
+            return { success: true, message: SUCCESS_MESSAGE, data: result };
         } catch (err) {
             console.error('Exception submitting contact inquiry:', err);
-            return { success: false, message: 'An error occurred. Please try again.' };
+            return { success: false, message: ERROR_MESSAGE };
         }
     }
 
@@ -68,7 +72,7 @@ const WiserdomeData = (function() {
      * @returns {Promise<Array>} - Array of pricing plans
      */
     async function getPricingPlans() {
-        const client = getClient();
+        const client = getClientOrWarn();
         
         if (!client) {
             // Return static fallback data
@@ -106,7 +110,7 @@ const WiserdomeData = (function() {
      * @returns {Promise<Array>} - Array of services
      */
     async function getServices() {
-        const client = getClient();
+        const client = getClientOrWarn();
         
         if (!client) {
             return getStaticServices();
@@ -144,7 +148,7 @@ const WiserdomeData = (function() {
      * @returns {Promise<Array>} - Array of FAQs
      */
     async function getFAQs(category = null) {
-        const client = getClient();
+        const client = getClientOrWarn();
         
         if (!client) {
             return getStaticFAQs();
@@ -184,7 +188,7 @@ const WiserdomeData = (function() {
      * @returns {Promise<Array>} - Array of cities
      */
     async function getCities() {
-        const client = getClient();
+        const client = getClientOrWarn();
         
         if (!client) {
             return getStaticCities();
@@ -219,7 +223,7 @@ const WiserdomeData = (function() {
      * @returns {Promise<Array>} - Array of testimonials
      */
     async function getTestimonials(featuredOnly = false) {
-        const client = getClient();
+        const client = getClientOrWarn();
         
         if (!client) {
             return getStaticTestimonials();
@@ -247,6 +251,19 @@ const WiserdomeData = (function() {
             console.error('Exception fetching testimonials:', err);
             return getStaticTestimonials();
         }
+    }
+
+    // ============================================
+    // Utility Functions
+    // ============================================
+
+    /**
+     * Convert a city name to a URL-friendly slug
+     * @param {string} name - City name
+     * @returns {string} - URL-friendly slug
+     */
+    function cityNameToSlug(name) {
+        return name.toLowerCase().replace(/\s+/g, '-');
     }
 
     // ============================================
@@ -452,7 +469,8 @@ const WiserdomeData = (function() {
         getServices,
         getFAQs,
         getCities,
-        getTestimonials
+        getTestimonials,
+        cityNameToSlug
     };
 })();
 
