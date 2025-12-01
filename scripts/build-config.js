@@ -23,6 +23,10 @@ const __dirname = path.dirname(__filename);
 const SUPABASE_URL = process.env.SUPABASE_URL || 'YOUR_SUPABASE_URL';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
 
+// Safely escape values for JavaScript using JSON.stringify
+const safeUrl = JSON.stringify(SUPABASE_URL);
+const safeKey = JSON.stringify(SUPABASE_ANON_KEY);
+
 // Generate the config file content
 const configContent = `/**
  * Environment Configuration
@@ -38,8 +42,8 @@ const configContent = `/**
  */
 
 window.ENV_CONFIG = {
-    SUPABASE_URL: '${SUPABASE_URL}',
-    SUPABASE_ANON_KEY: '${SUPABASE_ANON_KEY}'
+    SUPABASE_URL: ${safeUrl},
+    SUPABASE_ANON_KEY: ${safeKey}
 };
 `;
 

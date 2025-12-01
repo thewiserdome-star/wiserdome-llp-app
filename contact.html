@@ -169,8 +169,12 @@
         </div>
     </footer>
     <script src="js/main.js"></script>
-    <!-- Environment Configuration (generated during build) -->
-    <script src="js/env-config.js"></script>
+    <!-- Environment Configuration (generated during build, optional for local development) -->
+    <script>
+        // Initialize ENV_CONFIG with defaults in case env-config.js doesn't exist
+        window.ENV_CONFIG = window.ENV_CONFIG || {};
+    </script>
+    <script src="js/env-config.js" onerror="console.log('[Contact Form] env-config.js not found - using default configuration. Run npm run build to generate it.')"></script>
     <!-- Supabase Integration -->
     <script src="js/supabase-config.js"></script>
     <script src="js/data-service.js"></script>
