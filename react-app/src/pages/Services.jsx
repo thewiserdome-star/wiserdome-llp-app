@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { getServices } from '../lib/dataService';
 import './Services.css';
 
+// Service icons mapping - defined outside component to prevent recreation on render
+const SERVICE_ICONS = ['🏠', '🔧', '👥', '📋', '🎨', '💼'];
+
 export default function Services() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +22,6 @@ export default function Services() {
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
-
-  const serviceIcons = ['🏠', '🔧', '👥', '📋', '🎨', '💼'];
 
   return (
     <div className="services-page">
@@ -40,7 +41,7 @@ export default function Services() {
             {services.map((service, index) => (
               <div key={service.id} className="service-card">
                 <div className="service-card-icon">
-                  {serviceIcons[index % serviceIcons.length]}
+                  {SERVICE_ICONS[index % SERVICE_ICONS.length]}
                 </div>
                 <h3>{service.name}</h3>
                 <p className="service-description">{service.full_description}</p>

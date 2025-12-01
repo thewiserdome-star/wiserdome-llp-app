@@ -2,8 +2,26 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import './Home.css';
 
+// Pricing configuration - centralized for easy updates
+const PRICING_CONFIG = {
+  ANNUAL_DISCOUNT: 0.85, // 15% discount for annual billing
+  PLANS: {
+    basic: { monthly: 1999, name: 'Basic' },
+    standard: { monthly: 3499, name: 'Standard' },
+    premium: { monthly: 5999, name: 'Premium' }
+  }
+};
+
 export default function Home() {
   const [billingPeriod, setBillingPeriod] = useState('monthly');
+  
+  // Helper function to calculate price based on billing period
+  const getPrice = (monthlyPrice) => {
+    if (billingPeriod === 'annual') {
+      return Math.round(monthlyPrice * PRICING_CONFIG.ANNUAL_DISCOUNT).toLocaleString();
+    }
+    return monthlyPrice.toLocaleString();
+  };
   
   return (
     <div className="home-page">
@@ -212,7 +230,7 @@ export default function Home() {
               </div>
               <div className="pricing-price">
                 <span className="price-amount">
-                  ₹{billingPeriod === 'monthly' ? '1,999' : '1,699'}
+                  ₹{getPrice(PRICING_CONFIG.PLANS.basic.monthly)}
                 </span>
                 <span className="price-period">/month</span>
               </div>
@@ -234,7 +252,7 @@ export default function Home() {
               </div>
               <div className="pricing-price">
                 <span className="price-amount">
-                  ₹{billingPeriod === 'monthly' ? '3,499' : '2,999'}
+                  ₹{getPrice(PRICING_CONFIG.PLANS.standard.monthly)}
                 </span>
                 <span className="price-period">/month</span>
               </div>
@@ -256,7 +274,7 @@ export default function Home() {
               </div>
               <div className="pricing-price">
                 <span className="price-amount">
-                  ₹{billingPeriod === 'monthly' ? '5,999' : '5,099'}
+                  ₹{getPrice(PRICING_CONFIG.PLANS.premium.monthly)}
                 </span>
                 <span className="price-period">/month</span>
               </div>

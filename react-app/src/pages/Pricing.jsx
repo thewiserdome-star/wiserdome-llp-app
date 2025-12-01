@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import { getPricingPlans, getFAQs } from '../lib/dataService';
 import './Pricing.css';
 
+// Pricing configuration - centralized for easy updates
+const PRICING_CONFIG = {
+  ANNUAL_DISCOUNT: 0.85 // 15% discount for annual billing
+};
+
 export default function Pricing() {
   const [plans, setPlans] = useState([]);
   const [faqs, setFaqs] = useState([]);
@@ -25,6 +30,14 @@ export default function Pricing() {
 
   const toggleFaq = (id) => {
     setActiveFaq(activeFaq === id ? null : id);
+  };
+  
+  // Helper function to calculate price based on billing period
+  const getPrice = (monthlyPrice) => {
+    if (billingPeriod === 'annual') {
+      return Math.round(monthlyPrice * PRICING_CONFIG.ANNUAL_DISCOUNT)?.toLocaleString();
+    }
+    return monthlyPrice?.toLocaleString();
   };
 
   if (loading) {
@@ -84,9 +97,7 @@ export default function Pricing() {
                 </div>
                 <div className="pricing-price">
                   <span className="price-amount">
-                    ₹{billingPeriod === 'monthly' 
-                      ? plan.price_monthly?.toLocaleString() 
-                      : Math.round(plan.price_monthly * 0.85)?.toLocaleString()}
+                    ₹{getPrice(plan.price_monthly)}
                   </span>
                   <span className="price-period">/month</span>
                 </div>
