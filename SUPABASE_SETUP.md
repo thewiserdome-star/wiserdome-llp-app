@@ -17,6 +17,7 @@ The Wiserdome application uses Supabase as its backend database to store:
 
 1. A Supabase account (sign up at https://supabase.com)
 2. A Supabase project created in your account
+3. Node.js 18+ installed
 
 ## Setup Instructions
 
@@ -39,30 +40,65 @@ The Wiserdome application uses Supabase as its backend database to store:
 
 This will:
 - Create all necessary tables
-- Set up Row Level Security (RLS) policies
+- Set up Row Level Security (RLS) policies for both anonymous and authenticated users
 - Insert seed data (cities, pricing plans, services, FAQs, testimonials)
 - Create triggers for automatic timestamp updates
 
-### Step 3: Configure the Application
+### Step 3: Create an Admin User
 
-1. In Supabase, go to **Settings > API**
-2. Copy the following values:
-   - **Project URL** (e.g., `https://your-project.supabase.co`)
-   - **anon public key** (found under "Project API keys")
+1. In Supabase, go to **Authentication > Users**
+2. Click "Add User"
+3. Enter an email and password for your admin account
+4. Click "Create User"
 
-3. Open `js/supabase-config.js` and update:
+### Step 4: Configure the React Application
 
-```javascript
-const SUPABASE_URL = 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key-here';
+1. Navigate to the React app directory:
+   ```bash
+   cd react-app
+   ```
+
+2. Copy the environment example file:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. In Supabase, go to **Settings > API**
+4. Copy the following values and update your `.env` file:
+   - **Project URL** → `VITE_SUPABASE_URL`
+   - **anon public key** → `VITE_SUPABASE_ANON_KEY`
+
+### Step 5: Install Dependencies and Run
+
+```bash
+npm install
+npm run dev
 ```
 
-### Step 4: Verify the Setup
+### Step 6: Verify the Setup
 
-1. Open `contact.html` in a browser
-2. Submit a test contact form
+1. Open http://localhost:5173 in a browser
+2. Navigate to the Contact page and submit a test form
 3. Check your Supabase dashboard under **Table Editor > contact_inquiries**
-4. You should see the form submission recorded
+4. Navigate to /admin/login and sign in with your admin credentials
+5. Verify you can access the admin dashboard
+
+## React Application Structure
+
+```
+react-app/
+├── src/
+│   ├── components/
+│   │   ├── admin/          # Admin panel components
+│   │   ├── common/         # Shared components
+│   │   └── layout/         # Header, Footer
+│   ├── contexts/           # React contexts (Auth)
+│   ├── hooks/              # Custom hooks
+│   ├── lib/                # Supabase client, data service
+│   └── pages/              # Page components
+├── .env.example            # Environment variables template
+└── package.json
+```
 
 ## Database Schema
 
@@ -85,17 +121,38 @@ const SUPABASE_ANON_KEY = 'your-anon-key-here';
 The schema includes RLS policies that:
 - Allow anonymous users to insert contact inquiries
 - Allow anonymous users to read public data (pricing, services, FAQs, cities, testimonials)
-- Restrict access to sensitive data
+- Allow authenticated (admin) users full CRUD access to all tables
+- Restrict access to sensitive data for unauthenticated users
 
-## JavaScript API
+## Admin Panel
 
-The application provides a `WiserdomeData` object for interacting with Supabase:
+The admin panel is accessible at `/admin` and requires authentication.
+
+### Demo Mode
+
+When Supabase is not configured, the app runs in demo mode:
+- Demo credentials: `admin@wiserdome.com` / `admin123`
+- Changes will not be persisted
+
+### Admin Features
+
+- **Dashboard**: Overview of all content
+- **Pricing Plans**: Create, edit, delete pricing plans
+- **Services**: Manage service offerings
+- **FAQs**: Manage frequently asked questions
+- **Testimonials**: Manage customer testimonials
+- **Inquiries**: View and manage contact form submissions
+
+## Data Service API
+
+The application provides functions for interacting with Supabase:
 
 ### Contact Inquiries
 
 ```javascript
-// Submit a contact inquiry
-const result = await WiserdomeData.submitContactInquiry({
+import { submitContactInquiry } from './lib/dataService';
+
+const result = await submitContactInquiry({
     name: 'John Doe',
     email: 'john@example.com',
     phone: '+1234567890',
@@ -108,46 +165,53 @@ const result = await WiserdomeData.submitContactInquiry({
 ### Fetching Data
 
 ```javascript
-// Get pricing plans
-const plans = await WiserdomeData.getPricingPlans();
+import { getPricingPlans, getServices, getFAQs, getCities, getTestimonials } from './lib/dataService';
 
-// Get services
-const services = await WiserdomeData.getServices();
-
-// Get FAQs
-const faqs = await WiserdomeData.getFAQs();
-
-// Get cities
-const cities = await WiserdomeData.getCities();
-
-// Get testimonials
-const testimonials = await WiserdomeData.getTestimonials();
+const plans = await getPricingPlans();
+const services = await getServices();
+const faqs = await getFAQs();
+const cities = await getCities();
+const testimonials = await getTestimonials();
 ```
 
 ## Fallback Behavior
 
-If Supabase is not configured or unavailable, the application automatically falls back to static data defined in `js/data-service.js`. This ensures the website remains functional during development or if there are connectivity issues.
+If Supabase is not configured or unavailable, the application automatically falls back to static data defined in `src/lib/dataService.js`. This ensures the website remains functional during development or if there are connectivity issues.
 
 ## Security Considerations
 
 1. **API Keys**: The anon key is safe to expose in browser code as it only allows access based on RLS policies
 2. **RLS Policies**: All tables have RLS enabled to control data access
-3. **Form Validation**: Always validate form inputs on both client and server side
-4. **Rate Limiting**: Consider enabling rate limiting in Supabase for production
+3. **Authentication**: Admin features require Supabase authentication
+4. **Form Validation**: Always validate form inputs on both client and server side
+5. **Rate Limiting**: Consider enabling rate limiting in Supabase for production
+
+## Building for Production
+
+```bash
+cd react-app
+npm run build
+```
+
+The built files will be in the `dist/` directory.
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **"Supabase is not configured" warning**
-   - Make sure you've updated the credentials in `js/supabase-config.js`
+   - Make sure you've created a `.env` file with your credentials
 
 2. **Form submission fails**
    - Check browser console for errors
    - Verify RLS policies allow inserts to `contact_inquiries`
    - Check network tab for API response
 
-3. **Data not loading**
+3. **Admin login fails**
+   - Verify you've created a user in Supabase Authentication
+   - Check that RLS policies allow authenticated user access
+
+4. **Data not loading**
    - Verify the schema was executed successfully
    - Check RLS policies allow reads
    - Check if seed data was inserted
@@ -156,3 +220,4 @@ If Supabase is not configured or unavailable, the application automatically fall
 
 - [Supabase Documentation](https://supabase.com/docs)
 - [Supabase Discord Community](https://discord.supabase.com)
+- [React Router Documentation](https://reactrouter.com/)

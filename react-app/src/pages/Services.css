@@ -1,0 +1,54 @@
+.services-page .section-subtitle {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.service-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
+  margin-bottom: var(--spacing-3xl);
+}
+
+.service-block.reverse {
+  direction: rtl;
+}
+
+.service-block.reverse > * {
+  direction: ltr;
+}
+
+.service-description {
+  margin-bottom: var(--spacing-md);
+}
+
+.service-features {
+  list-style: disc;
+  padding-left: 20px;
+  color: var(--color-text-body);
+}
+
+.service-features li {
+  margin-bottom: 8px;
+}
+
+.cta-text {
+  margin-bottom: var(--spacing-xl);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  font-size: var(--font-size-lg);
+}
+
+@media (max-width: 768px) {
+  .service-block,
+  .service-block.reverse {
+    grid-template-columns: 1fr;
+    direction: ltr;
+  }
+}
