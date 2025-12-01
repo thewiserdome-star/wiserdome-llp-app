@@ -1,0 +1,91 @@
+.pricing-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: var(--spacing-3xl);
+}
+
+.pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: var(--shadow-md);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.pricing-table th,
+.pricing-table td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pricing-table th {
+  background-color: var(--color-bg-light);
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+}
+
+.pricing-table th .plan-price {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.pricing-table tr:last-child td {
+  border-bottom: none;
+}
+
+.pricing-table .feature-row,
+.pricing-table .feature-header {
+  text-align: left;
+  font-weight: var(--font-weight-medium);
+}
+
+.pricing-table .check {
+  color: green;
+  font-size: 1.2rem;
+}
+
+.pricing-table .cross {
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+}
+
+/* FAQ Section */
+.faq-section {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md) 0;
+}
+
+.faq-question {
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-toggle {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+.faq-answer {
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-body);
+  display: none;
+}
+
+.faq-item.active .faq-answer {
+  display: block;
+}

@@ -245,6 +245,101 @@ CREATE POLICY "Allow anonymous reads on cities"
     USING (is_active = true);
 
 -- ============================================
+-- Admin Policies (Authenticated Users)
+-- These policies allow authenticated admin users to manage data
+-- 
+-- SECURITY NOTE: In a production environment, consider implementing
+-- role-based access control (RBAC) by:
+-- 1. Creating an 'admin_users' table with user IDs
+-- 2. Adding a function to check if a user is an admin
+-- 3. Using that function in RLS policies
+-- 
+-- Example:
+-- CREATE OR REPLACE FUNCTION is_admin()
+-- RETURNS BOOLEAN AS $$
+-- BEGIN
+--   RETURN EXISTS (
+--     SELECT 1 FROM admin_users WHERE user_id = auth.uid()
+--   );
+-- END;
+-- $$ LANGUAGE plpgsql SECURITY DEFINER;
+-- 
+-- Then use: USING (is_admin()) instead of USING (true)
+-- ============================================
+
+-- Pricing Plans - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on pricing_plans"
+    ON pricing_plans
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Plan Features - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on plan_features"
+    ON plan_features
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Services - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on services"
+    ON services
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Service Features - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on service_features"
+    ON service_features
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- FAQs - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on faqs"
+    ON faqs
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Testimonials - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on testimonials"
+    ON testimonials
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Cities - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on cities"
+    ON cities
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Contact Inquiries - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on contact_inquiries"
+    ON contact_inquiries
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Properties - Full access for authenticated users
+CREATE POLICY "Allow authenticated users full access on properties"
+    ON properties
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- ============================================
 -- Seed Data
 -- Initial data to populate the database
 -- ============================================
