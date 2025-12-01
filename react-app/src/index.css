@@ -1,23 +1,63 @@
+/*
+  WISERDOME DESIGN SYSTEM
+  =======================
+  
+  Color Palette:
+  - Primary: Deep indigo/blue (#3730A3) for trust and stability
+  - Accent: Warm amber (#F59E0B) for CTAs and highlights
+  - Secondary accent: Teal (#14B8A6) for success states and variety
+  
+  Typography Scale (based on 1rem = 16px):
+  - H1: 3rem (48px) - Hero headlines
+  - H2: 2.25rem (36px) - Section titles
+  - H3: 1.5rem (24px) - Card titles
+  - Body: 1rem (16px) - Paragraphs
+  - Small: 0.875rem (14px) - Captions, notes
+  
+  Spacing Scale:
+  - xs: 0.25rem (4px), sm: 0.5rem (8px), md: 1rem (16px)
+  - lg: 1.5rem (24px), xl: 2rem (32px), 2xl: 3rem (48px)
+  - 3xl: 4rem (64px), 4xl: 6rem (96px)
+*/
+
 :root {
-  /* Colors */
-  --color-primary: #0F6FCC;
-  --color-primary-dark: #0A4E91;
-  --color-accent: #FF9F1C;
-  --color-accent-hover: #E68A00;
+  /* Colors - Deep Indigo/Blue Primary for Trust */
+  --color-primary: #3730A3;
+  --color-primary-light: #4F46E5;
+  --color-primary-dark: #312E81;
   
+  /* Accent - Warm Amber for CTAs */
+  --color-accent: #F59E0B;
+  --color-accent-hover: #D97706;
+  --color-accent-light: #FCD34D;
+  
+  /* Secondary Accent - Teal for variety */
+  --color-secondary: #14B8A6;
+  --color-secondary-hover: #0D9488;
+  
+  /* Backgrounds */
   --color-bg-white: #FFFFFF;
-  --color-bg-light: #F4F6F8;
-  --color-bg-dark: #1A1A1A;
+  --color-bg-light: #F8FAFC;
+  --color-bg-alt: #F1F5F9;
+  --color-bg-dark: #0F172A;
+  --color-bg-primary-subtle: #EEF2FF;
   
-  --color-text-heading: #1A1A1A;
-  --color-text-body: #4A4A4A;
-  --color-text-light: #718096;
+  /* Text Colors */
+  --color-text-heading: #1E293B;
+  --color-text-body: #475569;
+  --color-text-light: #94A3B8;
   --color-text-white: #FFFFFF;
   
+  /* Border & Dividers */
   --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  
+  /* Success/Error States */
+  --color-success: #10B981;
+  --color-error: #EF4444;
   
   /* Typography */
-  --font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -34,6 +74,10 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
   /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -43,22 +87,29 @@
   --spacing-2xl: 3rem;
   --spacing-3xl: 4rem;
   --spacing-4xl: 6rem;
+  --spacing-5xl: 8rem;
   
   /* Layout */
   --container-width: 1200px;
-  --header-height: 80px;
-  --border-radius-sm: 4px;
+  --header-height: 72px;
+  --border-radius-sm: 6px;
   --border-radius-md: 8px;
   --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
   --border-radius-full: 9999px;
   
-  /* Shadows */
+  /* Shadows - More refined for modern look */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.1);
   
   /* Transitions */
+  --transition-fast: all 0.15s ease;
   --transition-base: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
 }
 
 /* Reset & Base Styles */
