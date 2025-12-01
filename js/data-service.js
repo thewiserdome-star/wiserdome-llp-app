@@ -11,13 +11,41 @@ const WiserdomeData = (function() {
     const SUCCESS_MESSAGE = 'Thank you! We will contact you shortly.';
     const ERROR_MESSAGE = 'An error occurred. Please try again.';
     
+    // Error codes for better debugging
+    const ERROR_CODES = {
+        NOT_CONFIGURED: 'SUPABASE_NOT_CONFIGURED',
+        INSERT_FAILED: 'INSERT_FAILED',
+        NETWORK_ERROR: 'NETWORK_ERROR',
+        UNKNOWN_ERROR: 'UNKNOWN_ERROR'
+    };
+    
     // Get the Supabase client with configuration check
     function getClientOrWarn() {
-        if (!window.SupabaseConfig || !window.SupabaseConfig.isConfigured()) {
-            console.warn('Supabase is not configured. Using static fallback data.');
+        if (!window.SupabaseConfig) {
+            console.error('[Data Service] SupabaseConfig not found. Make sure supabase-config.js is loaded before data-service.js.');
             return null;
         }
+        
+        if (!window.SupabaseConfig.isConfigured()) {
+            const status = window.SupabaseConfig.getConfigurationStatus();
+            console.warn('[Data Service]', status.message);
+            console.warn('[Data Service] Using static fallback data.');
+            return null;
+        }
+        
         return window.SupabaseConfig.getClient();
+    }
+    
+    // Format error details for logging
+    function formatErrorDetails(error, context) {
+        return {
+            context,
+            message: error?.message || 'Unknown error',
+            code: error?.code || 'N/A',
+            details: error?.details || 'N/A',
+            hint: error?.hint || 'N/A',
+            timestamp: new Date().toISOString()
+        };
     }
 
     // ============================================
@@ -34,11 +62,20 @@ const WiserdomeData = (function() {
         
         if (!client) {
             // Fallback: Just log and show success (for development)
-            console.log('Contact form submission (Supabase not configured):', data);
-            return { success: true, message: SUCCESS_MESSAGE };
+            console.log('[Data Service] Contact form submission (Supabase not configured):', data);
+            return { 
+                success: true, 
+                message: SUCCESS_MESSAGE,
+                debug: {
+                    mode: 'fallback',
+                    reason: 'Supabase not configured'
+                }
+            };
         }
 
         try {
+            console.log('[Data Service] Submitting contact inquiry to Supabase...');
+            
             const { data: result, error } = await client
                 .from('contact_inquiries')
                 .insert([{
@@ -52,14 +89,53 @@ const WiserdomeData = (function() {
                 .select();
 
             if (error) {
-                console.error('Error submitting contact inquiry:', error);
-                return { success: false, message: ERROR_MESSAGE };
+                const errorDetails = formatErrorDetails(error, 'submitContactInquiry');
+                console.error('[Data Service] Supabase error:', errorDetails);
+                
+                // Provide user-friendly message based on error type
+                let userMessage = ERROR_MESSAGE;
+                if (error.code === '42501') {
+                    userMessage = 'Permission denied. Please contact support.';
+                    console.error('[Data Service] This might be an RLS policy issue. Check that anonymous inserts are allowed on contact_inquiries table.');
+                } else if (error.code === '23505') {
+                    userMessage = 'This inquiry has already been submitted.';
+                } else if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+                    userMessage = 'Network error. Please check your internet connection and try again.';
+                }
+                
+                return { 
+                    success: false, 
+                    message: userMessage,
+                    error: errorDetails
+                };
             }
 
-            return { success: true, message: SUCCESS_MESSAGE, data: result };
+            console.log('[Data Service] Contact inquiry submitted successfully:', result);
+            return { 
+                success: true, 
+                message: SUCCESS_MESSAGE, 
+                data: result 
+            };
         } catch (err) {
-            console.error('Exception submitting contact inquiry:', err);
-            return { success: false, message: ERROR_MESSAGE };
+            const errorDetails = formatErrorDetails(err, 'submitContactInquiry (exception)');
+            console.error('[Data Service] Exception during submission:', errorDetails);
+            
+            // Check for network-related errors
+            let userMessage = ERROR_MESSAGE;
+            if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError') || err.name === 'TypeError') {
+                userMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+                console.error('[Data Service] Network error detected. This could be caused by:');
+                console.error('  1. No internet connection');
+                console.error('  2. CORS issues with Supabase URL');
+                console.error('  3. Incorrect Supabase URL in supabase-config.js');
+                console.error('  4. Supabase project is paused or unavailable');
+            }
+            
+            return { 
+                success: false, 
+                message: userMessage,
+                error: errorDetails
+            };
         }
     }
 

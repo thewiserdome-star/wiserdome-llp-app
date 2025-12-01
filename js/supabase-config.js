@@ -4,24 +4,30 @@
  * This module initializes the Supabase client for the Wiserdome application.
  * 
  * SETUP INSTRUCTIONS:
- * 1. Create a Supabase project at https://supabase.com
- * 2. Get your project URL and anon key from Settings > API
- * 3. Replace the placeholder values below with your actual credentials
+ * 
+ * Option 1: Cloudflare Pages (Recommended for Production)
+ * 1. Go to Cloudflare Pages dashboard > Your project > Settings > Environment variables
+ * 2. Add SUPABASE_URL and SUPABASE_ANON_KEY as environment variables
+ * 3. Set build command to: npm run build
+ * 4. Deploy your site
+ * 
+ * Option 2: Local Development
+ * 1. Create a .env file in the root directory with:
+ *    SUPABASE_URL=https://your-project.supabase.co
+ *    SUPABASE_ANON_KEY=your-anon-key
+ * 2. Run: npm run build
+ * 
+ * Option 3: Manual Configuration (Not Recommended)
+ * 1. Update the fallback values below with your credentials
  * 
  * SECURITY NOTE:
  * The anon key is safe to expose in the browser as it only allows
  * access based on your Row Level Security (RLS) policies.
- * 
- * For production deployments, consider using a build process to inject
- * environment variables or a separate configuration file that is not
- * committed to version control.
  */
 
-// Supabase Configuration
-// Replace these placeholders with your actual Supabase project credentials
-// For production, consider using environment variables or a build process
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // e.g., 'https://your-project.supabase.co'
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+// Get Supabase credentials from environment config (generated during build) or use fallbacks
+const SUPABASE_URL = window.ENV_CONFIG?.SUPABASE_URL || 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = window.ENV_CONFIG?.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
 
 // Check if Supabase credentials are configured
 function isSupabaseConfigured() {
@@ -29,21 +35,48 @@ function isSupabaseConfigured() {
            SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
 }
 
+// Get configuration status for debugging
+function getConfigurationStatus() {
+    const urlConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL';
+    const keyConfigured = SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+    
+    return {
+        isConfigured: urlConfigured && keyConfigured,
+        urlConfigured,
+        keyConfigured,
+        message: !urlConfigured && !keyConfigured 
+            ? 'Supabase URL and Anon Key are not configured. Please update js/supabase-config.js with your Supabase credentials.'
+            : !urlConfigured 
+                ? 'Supabase URL is not configured.'
+                : !keyConfigured 
+                    ? 'Supabase Anon Key is not configured.'
+                    : 'Supabase is configured.'
+    };
+}
+
 // Initialize Supabase client (loaded via CDN in HTML)
 let supabaseClient = null;
 
 function initSupabase() {
-    if (!isSupabaseConfigured()) {
-        console.warn('Supabase is not configured. Please update js/supabase-config.js with your credentials.');
+    const status = getConfigurationStatus();
+    
+    if (!status.isConfigured) {
+        console.warn('[Supabase Config]', status.message);
+        console.warn('[Supabase Config] Form submissions will be logged to console but not saved to database.');
         return null;
     }
     
     if (typeof supabase !== 'undefined' && supabase.createClient) {
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('Supabase client initialized successfully');
-        return supabaseClient;
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('[Supabase Config] Client initialized successfully');
+            return supabaseClient;
+        } catch (error) {
+            console.error('[Supabase Config] Failed to create client:', error.message);
+            return null;
+        }
     } else {
-        console.error('Supabase library not loaded. Make sure to include the CDN script.');
+        console.error('[Supabase Config] Supabase library not loaded. Make sure to include the CDN script before supabase-config.js.');
         return null;
     }
 }
@@ -58,6 +91,7 @@ function getSupabaseClient() {
 // Export for use in other modules
 window.SupabaseConfig = {
     isConfigured: isSupabaseConfigured,
+    getConfigurationStatus: getConfigurationStatus,
     init: initSupabase,
     getClient: getSupabaseClient
 };

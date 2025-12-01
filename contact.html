@@ -169,15 +169,27 @@
         </div>
     </footer>
     <script src="js/main.js"></script>
+    <!-- Environment Configuration (generated during build, optional for local development) -->
+    <script>
+        // Initialize ENV_CONFIG with defaults in case env-config.js doesn't exist
+        window.ENV_CONFIG = window.ENV_CONFIG || {};
+    </script>
+    <script src="js/env-config.js" onerror="console.log('[Contact Form] env-config.js not found - using default configuration. Run npm run build to generate it.')"></script>
     <!-- Supabase Integration -->
     <script src="js/supabase-config.js"></script>
     <script src="js/data-service.js"></script>
     <script>
         // Initialize Supabase when the page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Supabase
+            // Log configuration status for debugging
             if (window.SupabaseConfig) {
+                const status = window.SupabaseConfig.getConfigurationStatus();
+                console.log('[Contact Form] Supabase configuration status:', status);
+                
+                // Initialize Supabase
                 window.SupabaseConfig.init();
+            } else {
+                console.error('[Contact Form] SupabaseConfig not found. Supabase functionality will not work.');
             }
 
             // Handle contact form submission
@@ -203,21 +215,48 @@
                         message: document.getElementById('message').value
                     };
                     
+                    console.log('[Contact Form] Submitting form data:', formData);
+                    
                     try {
+                        // Check if WiserdomeData is available
+                        if (!window.WiserdomeData) {
+                            throw new Error('WiserdomeData service not available. Make sure data-service.js is loaded.');
+                        }
+                        
                         // Submit to Supabase
                         const result = await window.WiserdomeData.submitContactInquiry(formData);
+                        
+                        console.log('[Contact Form] Submission result:', result);
                         
                         if (result.success) {
                             // Show success message
                             alert(result.message);
                             contactForm.reset();
                         } else {
-                            // Show error message
+                            // Show error message with more details in console
+                            console.error('[Contact Form] Submission failed:', result.error);
                             alert(result.message);
                         }
                     } catch (error) {
-                        console.error('Form submission error:', error);
-                        alert('An error occurred. Please try again.');
+                        console.error('[Contact Form] Unexpected error during submission:', {
+                            message: error.message,
+                            stack: error.stack,
+                            timestamp: new Date().toISOString()
+                        });
+                        
+                        // Provide more helpful error message
+                        let userMessage = 'An error occurred. Please try again.';
+                        if (error.message?.includes('WiserdomeData')) {
+                            userMessage = 'Service not available. Please refresh the page and try again.';
+                        }
+                        
+                        alert(userMessage);
+                        console.error('[Contact Form] Debug tip: Check the browser console for detailed error information.');
+                        console.error('[Contact Form] Common issues:');
+                        console.error('  1. Supabase credentials not configured in js/supabase-config.js');
+                        console.error('  2. Supabase project may be paused or unavailable');
+                        console.error('  3. RLS policies may not allow anonymous inserts');
+                        console.error('  4. Network connectivity issues');
                     } finally {
                         // Re-enable button
                         submitButton.disabled = false;
@@ -236,6 +275,11 @@
             if (!citySelect) return;
 
             try {
+                if (!window.WiserdomeData) {
+                    console.warn('[Contact Form] WiserdomeData not available for loading cities.');
+                    return;
+                }
+                
                 const cities = await window.WiserdomeData.getCities();
                 
                 // Clear existing options except the first one
@@ -254,8 +298,10 @@
                 otherOption.value = 'other';
                 otherOption.textContent = 'Other';
                 citySelect.appendChild(otherOption);
+                
+                console.log('[Contact Form] Cities loaded successfully:', cities.length);
             } catch (error) {
-                console.error('Error loading cities:', error);
+                console.error('[Contact Form] Error loading cities:', error);
             }
         }
     </script>

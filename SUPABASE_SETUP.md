@@ -44,7 +44,20 @@ This will:
 - Insert seed data (cities, pricing plans, services, FAQs, testimonials)
 - Create triggers for automatic timestamp updates
 
-### Step 3: Create an Admin User
+### Step 3: Deploy to Cloudflare Pages
+
+1. In your Cloudflare Pages dashboard, go to your project settings
+2. Navigate to **Settings > Environment variables**
+3. Add the following environment variables:
+   - **SUPABASE_URL**: Your Supabase project URL (found in Settings > API)
+   - **SUPABASE_ANON_KEY**: Your Supabase anonymous key (found in Settings > API)
+4. Set the build command to: `npm run build`
+5. Set the build output directory to: `/` (root directory)
+6. Deploy your site
+
+The build script will automatically generate the configuration file with your Supabase credentials.
+
+### Step 4: Create an Admin User
 
 1. In Supabase, go to **Authentication > Users**
 2. Click "Add User"
@@ -188,6 +201,17 @@ If Supabase is not configured or unavailable, the application automatically fall
 
 ## Building for Production
 
+### Static HTML Site (Cloudflare Pages)
+
+```bash
+# Set environment variables in Cloudflare Pages, then build
+npm run build
+```
+
+The build script generates `js/env-config.js` with your Supabase credentials.
+
+### React Application
+
 ```bash
 cd react-app
 npm run build
@@ -197,10 +221,39 @@ The built files will be in the `dist/` directory.
 
 ## Troubleshooting
 
+### Debugging Contact Form Errors
+
+If you see "An error occurred. Please try again." when submitting the contact form:
+
+1. **Open Browser Developer Tools** (F12 or Right-click > Inspect)
+2. **Go to the Console tab** and look for messages starting with `[Contact Form]` or `[Data Service]`
+3. **Check for these common issues:**
+
+   - **"Supabase URL and Anon Key are not configured"**
+     - You need to set environment variables in Cloudflare Pages
+     - Go to Cloudflare Pages > Your project > Settings > Environment variables
+     - Add `SUPABASE_URL` and `SUPABASE_ANON_KEY`
+     - Redeploy your site
+
+   - **"Permission denied" or RLS policy error**
+     - The Supabase RLS policies may not allow anonymous inserts
+     - Check that the `contact_inquiries` table has the correct RLS policy
+     - Run the SQL from `supabase/schema.sql` if you haven't already
+
+   - **Network error or "Failed to fetch"**
+     - Check your internet connection
+     - Verify the Supabase URL is correct
+     - Make sure your Supabase project is not paused
+
+   - **Supabase project is paused**
+     - Free-tier Supabase projects pause after 1 week of inactivity
+     - Go to Supabase dashboard and resume your project
+
 ### Common Issues
 
 1. **"Supabase is not configured" warning**
-   - Make sure you've created a `.env` file with your credentials
+   - For Cloudflare Pages: Set environment variables in project settings
+   - For local development: Run `npm run build` with environment variables set
 
 2. **Form submission fails**
    - Check browser console for errors
