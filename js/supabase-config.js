@@ -26,8 +26,8 @@
  */
 
 // Get Supabase credentials from environment config (generated during build) or use fallbacks
-const SUPABASE_URL = window.ENV_CONFIG?.SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = window.ENV_CONFIG?.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = window.ENV_CONFIG?.SUPABASE_URL || 'https://tvijjwcetyxmosfleggl.supabase.co';
+const SUPABASE_ANON_KEY = window.ENV_CONFIG?.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aWpqd2NldHl4bW9zZmxlZ2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NTM3NjYsImV4cCI6MjA4MDEyOTc2Nn0.MnqtE2ZLJiedvcNB1FkZI6COKw-e10HvD1LeUkb02Ek';
 
 // Check if Supabase credentials are configured
 function isSupabaseConfigured() {
@@ -37,8 +37,8 @@ function isSupabaseConfigured() {
 
 // Get configuration status for debugging
 function getConfigurationStatus() {
-    const urlConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL';
-    const keyConfigured = SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+    const urlConfigured = SUPABASE_URL !== 'https://tvijjwcetyxmosfleggl.supabase.co';
+    const keyConfigured = SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aWpqd2NldHl4bW9zZmxlZ2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NTM3NjYsImV4cCI6MjA4MDEyOTc2Nn0.MnqtE2ZLJiedvcNB1FkZI6COKw-e10HvD1LeUkb02Ek';
     
     return {
         isConfigured: urlConfigured && keyConfigured,
