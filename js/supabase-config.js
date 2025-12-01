@@ -31,24 +31,24 @@ const SUPABASE_ANON_KEY = window.ENV_CONFIG?.SUPABASE_ANON_KEY || 'eyJhbGciOiJIU
 
 // Check if Supabase credentials are configured
 function isSupabaseConfigured() {
-    return SUPABASE_URL !== 'YOUR_SUPABASE_URL' && 
-           SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+    return SUPABASE_URL !== 'YOUR_SUPABASE_URL' &&
+        SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
 }
 
 // Get configuration status for debugging
 function getConfigurationStatus() {
-    const urlConfigured = SUPABASE_URL !== 'https://tvijjwcetyxmosfleggl.supabase.co';
-    const keyConfigured = SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aWpqd2NldHl4bW9zZmxlZ2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NTM3NjYsImV4cCI6MjA4MDEyOTc2Nn0.MnqtE2ZLJiedvcNB1FkZI6COKw-e10HvD1LeUkb02Ek';
-    
+    const urlConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL';
+    const keyConfigured = SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+
     return {
         isConfigured: urlConfigured && keyConfigured,
         urlConfigured,
         keyConfigured,
-        message: !urlConfigured && !keyConfigured 
-            ? 'Supabase URL and Anon Key are not configured. Please update js/supabase-config.js with your Supabase credentials.'
-            : !urlConfigured 
+        message: !urlConfigured && !keyConfigured
+            ? 'Supabase URL and Anon Key are not configured.'
+            : !urlConfigured
                 ? 'Supabase URL is not configured.'
-                : !keyConfigured 
+                : !keyConfigured
                     ? 'Supabase Anon Key is not configured.'
                     : 'Supabase is configured.'
     };
@@ -59,13 +59,13 @@ let supabaseClient = null;
 
 function initSupabase() {
     const status = getConfigurationStatus();
-    
+
     if (!status.isConfigured) {
         console.warn('[Supabase Config]', status.message);
         console.warn('[Supabase Config] Form submissions will be logged to console but not saved to database.');
         return null;
     }
-    
+
     if (typeof supabase !== 'undefined' && supabase.createClient) {
         try {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
