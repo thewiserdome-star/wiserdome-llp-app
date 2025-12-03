@@ -45,7 +45,11 @@ export default function Header() {
       <div className="container">
         <div className="header-content">
           <Link to="/" className="logo" onClick={handleNavClick}>
-            <span className="logo-icon">🏠</span>
+            <img 
+              src="https://saraekadant.blob.core.windows.net/mediawiserdome/Wiserdome%20Logo.jpg" 
+              alt="Wiserdome Logo" 
+              className="logo-image"
+            />
             Wiserdome
           </Link>
           

@@ -9,7 +9,11 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="footer-brand">
             <div className="footer-logo">
-              <span className="footer-logo-icon">🏠</span>
+              <img 
+                src="https://saraekadant.blob.core.windows.net/mediawiserdome/Wiserdome%20Logo.jpg" 
+                alt="Wiserdome Logo" 
+                className="footer-logo-image"
+              />
               <span className="footer-logo-text">Wiserdome</span>
             </div>
             <p className="footer-tagline">

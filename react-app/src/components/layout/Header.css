@@ -28,6 +28,11 @@
   z-index: 1001;
 }
 
+.logo-image {
+  height: 40px;
+  width: auto;
+}
+
 .logo-icon {
   font-size: 1.75rem;
 }
