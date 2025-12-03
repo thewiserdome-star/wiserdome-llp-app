@@ -45,10 +45,13 @@ function PublicLayout() {
   );
 }
 
+import ScrollToTop from './components/ScrollToTop';
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Public Routes */}
           <Route element={<PublicLayout />}>
@@ -60,11 +63,11 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/developer-websites" element={<DeveloperWebsites />} />
           </Route>
-          
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route 
-            path="/admin" 
+          <Route
+            path="/admin"
             element={
               <ProtectedRoute>
                 <AdminDashboard />
