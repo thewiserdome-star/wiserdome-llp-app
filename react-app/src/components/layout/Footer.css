@@ -19,6 +19,11 @@
   margin-bottom: var(--spacing-lg);
 }
 
+.footer-logo-image {
+  height: 40px;
+  width: auto;
+}
+
 .footer-logo-icon {
   font-size: 1.5rem;
 }
