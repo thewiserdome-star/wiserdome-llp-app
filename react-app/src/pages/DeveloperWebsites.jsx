@@ -1,71 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { submitDeveloperWebsiteInquiry } from '../lib/dataService';
+import { submitDeveloperWebsiteInquiry, getDeveloperPackages } from '../lib/dataService';
 import './DeveloperWebsites.css';
-
-// Static data for developer website packages
-const PACKAGES = [
-  {
-    id: 'starter',
-    name: 'Starter Project Site',
-    tagline: 'Perfect for single project launches',
-    priceLabel: 'One-time from',
-    price: '₹49,999',
-    priceNote: '+ ₹2,999/mo hosting',
-    idealFor: 'New property launches, individual project microsites, and builders testing digital marketing.',
-    features: [
-      'Single project landing page',
-      'Project overview & highlights',
-      'Interactive location map',
-      'Image gallery with lightbox',
-      'Lead capture form with email alerts',
-      'Basic analytics dashboard',
-      'Mobile-responsive design',
-      'SSL security certificate'
-    ],
-    isPopular: false
-  },
-  {
-    id: 'growth',
-    name: 'Growth Multi-Project Site',
-    tagline: 'Scale your digital presence',
-    priceLabel: 'One-time from',
-    price: '₹1,49,999',
-    priceNote: '+ ₹5,999/mo hosting',
-    idealFor: 'Growing developers with multiple ongoing projects who need a centralized digital hub.',
-    features: [
-      'Multi-project pages (up to 10)',
-      'Property listing grid with filters',
-      'Blog/news section for updates',
-      'Advanced SEO setup & optimization',
-      'CRM/lead integration hooks',
-      'Virtual tour embedding',
-      'Social media integration',
-      'Priority email support'
-    ],
-    isPopular: true
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise Developer Suite',
-    tagline: 'Complete digital transformation',
-    priceLabel: 'Custom pricing from',
-    price: '₹3,99,999',
-    priceNote: '+ custom hosting SLA',
-    idealFor: 'Large developers and builders with multi-city portfolios requiring enterprise-grade solutions.',
-    features: [
-      'Custom design system & branding',
-      'Unlimited project pages',
-      'Multi-city portfolio management',
-      'CRM & marketing tool integrations',
-      'Dedicated account manager',
-      'SLA-backed hosting (99.9% uptime)',
-      '24/7 priority support',
-      'Advanced analytics & reporting'
-    ],
-    isPopular: false
-  }
-];
 
 const PROCESS_STEPS = [
   {
@@ -156,6 +92,8 @@ const FAQS = [
 ];
 
 export default function DeveloperWebsites() {
+  const [packages, setPackages] = useState([]);
+  const [loadingPackages, setLoadingPackages] = useState(true);
   const [activeFaq, setActiveFaq] = useState(null);
   const [formData, setFormData] = useState({
     companyName: '',
@@ -169,6 +107,20 @@ export default function DeveloperWebsites() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState(null);
+
+  useEffect(() => {
+    async function loadPackages() {
+      try {
+        const data = await getDeveloperPackages();
+        setPackages(data);
+      } catch (error) {
+        console.error('Failed to load packages:', error);
+      } finally {
+        setLoadingPackages(false);
+      }
+    }
+    loadPackages();
+  }, []);
 
   const toggleFaq = (id) => {
     setActiveFaq(activeFaq === id ? null : id);
@@ -185,7 +137,7 @@ export default function DeveloperWebsites() {
     setSubmitResult(null);
 
     const result = await submitDeveloperWebsiteInquiry(formData);
-    
+
     setSubmitResult(result);
     setSubmitting(false);
 
@@ -228,7 +180,7 @@ export default function DeveloperWebsites() {
             <h2>Built for Property Developers & Builders</h2>
             <p>Our website solutions are specifically designed for the Indian real estate market.</p>
           </div>
-          
+
           <div className="audience-bullets">
             <div className="audience-bullet">
               <span className="audience-bullet-icon">🏗️</span>
@@ -270,48 +222,52 @@ export default function DeveloperWebsites() {
             <h2>Choose Your Website Solution</h2>
             <p>From single project sites to enterprise portfolios—we have a plan for every stage of growth.</p>
           </div>
-          
+
           <div className="packages-grid">
-            {PACKAGES.map((pkg) => (
-              <div 
-                key={pkg.id} 
-                className={`package-card ${pkg.isPopular ? 'package-card-popular' : ''}`}
-              >
-                {pkg.isPopular && <div className="package-badge">Most Popular</div>}
-                <div className="package-header">
-                  <h3>{pkg.name}</h3>
-                  <p className="package-tagline">{pkg.tagline}</p>
+            {loadingPackages ? (
+              <div className="loading">Loading packages...</div>
+            ) : (
+              packages.map((pkg) => (
+                <div
+                  key={pkg.id}
+                  className={`package-card ${pkg.isPopular ? 'package-card-popular' : ''}`}
+                >
+                  {pkg.isPopular && <div className="package-badge">Most Popular</div>}
+                  <div className="package-header">
+                    <h3>{pkg.name}</h3>
+                    <p className="package-tagline">{pkg.tagline}</p>
+                  </div>
+                  <div className="package-price">
+                    <span className="price-label">{pkg.priceLabel}</span>
+                    <span className="price-amount">{pkg.price}</span>
+                    <span className="price-note">{pkg.priceNote}</span>
+                  </div>
+                  <div className="package-ideal">
+                    <strong>Ideal for:</strong>
+                    <p>{pkg.idealFor}</p>
+                  </div>
+                  <div className="package-features">
+                    <h4>Key Features</h4>
+                    <ul>
+                      {pkg.features.map((feature, i) => (
+                        <li key={i}>
+                          <span className="check">✓</span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="package-cta">
+                    <Link
+                      to="/contact"
+                      className={`btn ${pkg.isPopular ? 'btn-primary' : 'btn-outline'} full-width`}
+                    >
+                      Get Started
+                    </Link>
+                  </div>
                 </div>
-                <div className="package-price">
-                  <span className="price-label">{pkg.priceLabel}</span>
-                  <span className="price-amount">{pkg.price}</span>
-                  <span className="price-note">{pkg.priceNote}</span>
-                </div>
-                <div className="package-ideal">
-                  <strong>Ideal for:</strong>
-                  <p>{pkg.idealFor}</p>
-                </div>
-                <div className="package-features">
-                  <h4>Key Features</h4>
-                  <ul>
-                    {pkg.features.map((feature, i) => (
-                      <li key={i}>
-                        <span className="check">✓</span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="package-cta">
-                  <Link 
-                    to="/contact" 
-                    className={`btn ${pkg.isPopular ? 'btn-primary' : 'btn-outline'} full-width`}
-                  >
-                    Get Started
-                  </Link>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -324,7 +280,7 @@ export default function DeveloperWebsites() {
               <span className="section-label">Managed Hosting</span>
               <h2>Reliable Hosting & Ongoing Maintenance</h2>
               <p>Focus on selling properties while we handle the technical side. Our managed hosting ensures your websites perform flawlessly during critical launch periods.</p>
-              
+
               <div className="hosting-features">
                 <div className="hosting-feature">
                   <span className="hosting-feature-icon">🔒</span>
@@ -356,7 +312,7 @@ export default function DeveloperWebsites() {
                 </div>
               </div>
             </div>
-            
+
             <div className="hosting-image">
               <div className="hosting-placeholder">
                 <span className="hosting-placeholder-icon">🖥️</span>
@@ -375,7 +331,7 @@ export default function DeveloperWebsites() {
             <h2>How It Works</h2>
             <p>A streamlined process from initial call to launch and beyond.</p>
           </div>
-          
+
           <div className="process-timeline">
             {PROCESS_STEPS.map((step) => (
               <div key={step.number} className="process-step">
@@ -397,7 +353,7 @@ export default function DeveloperWebsites() {
             <h2>Results That Matter</h2>
             <p>We build websites that drive real business outcomes for property developers.</p>
           </div>
-          
+
           <div className="benefits-grid">
             {BENEFITS.map((benefit, index) => (
               <div key={index} className="benefit-card">
@@ -417,14 +373,14 @@ export default function DeveloperWebsites() {
             <span className="section-label">FAQ</span>
             <h2>Frequently Asked Questions</h2>
           </div>
-          
+
           <div className="faq-grid">
             {FAQS.map(faq => (
-              <div 
-                key={faq.id} 
+              <div
+                key={faq.id}
                 className={`faq-item ${activeFaq === faq.id ? 'active' : ''}`}
               >
-                <button 
+                <button
                   className="faq-question"
                   onClick={() => toggleFaq(faq.id)}
                   aria-expanded={activeFaq === faq.id}
@@ -446,7 +402,7 @@ export default function DeveloperWebsites() {
             <div className="devweb-cta-info">
               <h2>Ready to Launch Your Project Website?</h2>
               <p>Schedule a call with our team to discuss your requirements and get a customized proposal.</p>
-              
+
               <div className="cta-contact-options">
                 <div className="cta-contact-item">
                   <span className="cta-contact-icon">📞</span>
@@ -462,26 +418,26 @@ export default function DeveloperWebsites() {
                 </div>
               </div>
             </div>
-            
+
             <div className="devweb-cta-form">
               <h3>Request a Proposal</h3>
-              
+
               {submitResult && (
                 <div className={`alert ${submitResult.success ? 'alert-success' : 'alert-error'}`}>
                   {submitResult.message}
                 </div>
               )}
-              
+
               <form onSubmit={handleSubmit}>
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="companyName" className="form-label">Company Name</label>
-                    <input 
-                      type="text" 
-                      id="companyName" 
+                    <input
+                      type="text"
+                      id="companyName"
                       name="companyName"
-                      className="form-input" 
-                      required 
+                      className="form-input"
+                      required
                       placeholder="Your Company"
                       value={formData.companyName}
                       onChange={handleChange}
@@ -489,27 +445,27 @@ export default function DeveloperWebsites() {
                   </div>
                   <div className="form-group">
                     <label htmlFor="contactName" className="form-label">Contact Person</label>
-                    <input 
-                      type="text" 
-                      id="contactName" 
+                    <input
+                      type="text"
+                      id="contactName"
                       name="contactName"
-                      className="form-input" 
-                      required 
+                      className="form-input"
+                      required
                       placeholder="Your Name"
                       value={formData.contactName}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="email" className="form-label">Email Address</label>
-                    <input 
-                      type="email" 
-                      id="email" 
+                    <input
+                      type="email"
+                      id="email"
                       name="email"
-                      className="form-input" 
+                      className="form-input"
                       required
                       placeholder="you@company.com"
                       value={formData.email}
@@ -518,24 +474,24 @@ export default function DeveloperWebsites() {
                   </div>
                   <div className="form-group">
                     <label htmlFor="phone" className="form-label">Phone Number</label>
-                    <input 
-                      type="tel" 
-                      id="phone" 
+                    <input
+                      type="tel"
+                      id="phone"
                       name="phone"
-                      className="form-input" 
-                      required 
+                      className="form-input"
+                      required
                       placeholder="+91 98765 43210"
                       value={formData.phone}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="city" className="form-label">Primary City</label>
-                    <select 
-                      id="city" 
+                    <select
+                      id="city"
                       name="city"
                       className="form-select"
                       value={formData.city}
@@ -553,8 +509,8 @@ export default function DeveloperWebsites() {
                   </div>
                   <div className="form-group">
                     <label htmlFor="projectsPerYear" className="form-label">Projects per Year</label>
-                    <select 
-                      id="projectsPerYear" 
+                    <select
+                      id="projectsPerYear"
                       name="projectsPerYear"
                       className="form-select"
                       value={formData.projectsPerYear}
@@ -568,26 +524,26 @@ export default function DeveloperWebsites() {
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label htmlFor="currentWebsite" className="form-label">Current Website (if any)</label>
-                  <input 
-                    type="url" 
-                    id="currentWebsite" 
+                  <input
+                    type="url"
+                    id="currentWebsite"
                     name="currentWebsite"
-                    className="form-input" 
+                    className="form-input"
                     placeholder="https://yourcompany.com"
                     value={formData.currentWebsite}
                     onChange={handleChange}
                   />
                 </div>
-                
+
                 <div className="form-group">
                   <label htmlFor="message" className="form-label">Tell us about your requirements</label>
-                  <textarea 
-                    id="message" 
+                  <textarea
+                    id="message"
                     name="message"
-                    className="form-textarea" 
+                    className="form-textarea"
                     rows="3"
                     placeholder="Brief description of your website needs..."
                     value={formData.message}
@@ -595,8 +551,8 @@ export default function DeveloperWebsites() {
                   />
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-accent full-width"
                   disabled={submitting}
                 >
