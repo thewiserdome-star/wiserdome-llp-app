@@ -4,7 +4,4 @@ compatibility_date = "2024-09-23"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
-
-# This tells Cloudflare to serve index.html for all unknown routes (SPA support)
-[assets.not_found_handling]
-kind = "spa"
+not_found_handling = "single-page-application"
