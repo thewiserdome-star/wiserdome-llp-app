@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="footer-brand">
             <div className="footer-logo">
               <img 
-                src="https://saraekadant.blob.core.windows.net/mediawiserdome/Wiserdome%20Logo.jpg" 
+                src="https://saraekadant.blob.core.windows.net/mediawiserdome/Wiserdome%20Logo%20Black%20Bg.jpg" 
                 alt="Wiserdome Logo" 
                 className="footer-logo-image"
               />
