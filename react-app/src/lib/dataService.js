@@ -47,6 +47,43 @@ export async function submitContactInquiry(data) {
 }
 
 // ============================================
+// Developer Website Inquiries
+// ============================================
+
+export async function submitDeveloperWebsiteInquiry(data) {
+  if (!supabase) {
+    console.log('Developer website inquiry submission (Supabase not configured):', data);
+    return { success: true, message: SUCCESS_MESSAGE };
+  }
+
+  try {
+    const { data: result, error } = await supabase
+      .from('developer_website_inquiries')
+      .insert([{
+        company_name: data.companyName,
+        contact_name: data.contactName,
+        email: data.email,
+        phone: data.phone,
+        city: data.city,
+        projects_per_year: data.projectsPerYear,
+        current_website: data.currentWebsite,
+        message: data.message
+      }])
+      .select();
+
+    if (error) {
+      console.error('Error submitting developer website inquiry:', error);
+      return { success: false, message: ERROR_MESSAGE };
+    }
+
+    return { success: true, message: SUCCESS_MESSAGE, data: result };
+  } catch (err) {
+    console.error('Exception submitting developer website inquiry:', err);
+    return { success: false, message: ERROR_MESSAGE };
+  }
+}
+
+// ============================================
 // Pricing Plans
 // ============================================
 

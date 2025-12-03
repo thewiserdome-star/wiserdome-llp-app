@@ -18,6 +18,7 @@ export default function AdminDashboard() {
     { path: '/admin', label: 'Dashboard', icon: '📊' },
     { path: '/admin/pricing', label: 'Pricing Plans', icon: '💰' },
     { path: '/admin/services', label: 'Services', icon: '🛠️' },
+    { path: '/admin/developer-websites', label: 'Developer Websites', icon: '🌐' },
     { path: '/admin/faqs', label: 'FAQs', icon: '❓' },
     { path: '/admin/testimonials', label: 'Testimonials', icon: '💬' },
     { path: '/admin/inquiries', label: 'Inquiries', icon: '📧' },

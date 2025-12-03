@@ -12,6 +12,7 @@ import Services from './pages/Services';
 import Pricing from './pages/Pricing';
 import HowItWorks from './pages/HowItWorks';
 import Contact from './pages/Contact';
+import DeveloperWebsites from './pages/DeveloperWebsites';
 
 // Admin Pages
 import AdminLogin from './pages/AdminLogin';
@@ -25,6 +26,7 @@ import AdminServices from './components/admin/AdminServices';
 import AdminFAQs from './components/admin/AdminFAQs';
 import AdminTestimonials from './components/admin/AdminTestimonials';
 import AdminInquiries from './components/admin/AdminInquiries';
+import AdminDeveloperWebsites from './components/admin/AdminDeveloperWebsites';
 
 // Styles
 import './index.css';
@@ -56,6 +58,7 @@ function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/developer-websites" element={<DeveloperWebsites />} />
           </Route>
           
           {/* Admin Routes */}
@@ -74,6 +77,7 @@ function App() {
             <Route path="faqs" element={<AdminFAQs />} />
             <Route path="testimonials" element={<AdminTestimonials />} />
             <Route path="inquiries" element={<AdminInquiries />} />
+            <Route path="developer-websites" element={<AdminDeveloperWebsites />} />
           </Route>
         </Routes>
       </BrowserRouter>
