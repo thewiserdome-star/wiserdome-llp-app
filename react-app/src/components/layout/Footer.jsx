@@ -14,7 +14,7 @@ export default function Footer() {
                 alt="Wiserdome Logo" 
                 className="footer-logo-image"
               />
-              <span className="footer-logo-text">Wiserdome</span>
+              <span className="footer-logo-text"></span>
             </div>
             <p className="footer-tagline">
               Your trusted partner for property management in India. We ensure your assets are safe, profitable, and well-maintained—so you can focus on what matters most.
