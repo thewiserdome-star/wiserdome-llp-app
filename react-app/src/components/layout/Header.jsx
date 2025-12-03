@@ -50,7 +50,6 @@ export default function Header() {
               alt="Wiserdome Logo" 
               className="logo-image"
             />
-            Wiserdome
           </Link>
           
           {/* Mobile menu button */}
