@@ -314,10 +314,11 @@ export default function DeveloperWebsites() {
             </div>
 
             <div className="hosting-image">
-              <div className="hosting-placeholder">
-                <span className="hosting-placeholder-icon">🖥️</span>
-                <span>Hosting Dashboard Preview</span>
-              </div>
+              <img
+                src="https://saraekadant.blob.core.windows.net/mediawiserdome/wiserdome_developer_websites_%20page_hostingdashboard.png"
+                alt="Wiserdome Hosting Dashboard"
+                className="hosting-img"
+              />
             </div>
           </div>
         </div>

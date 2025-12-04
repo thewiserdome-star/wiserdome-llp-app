@@ -266,7 +266,7 @@
   margin-bottom: var(--spacing-lg);
 }
 
-.hosting-content > p {
+.hosting-content>p {
   font-size: var(--font-size-lg);
   color: var(--color-text-light);
   margin-bottom: var(--spacing-xl);
@@ -298,30 +298,9 @@
 }
 
 .hosting-feature-content p {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-light);
-  margin: 0;
-}
-
-.hosting-image {
-  background: var(--color-bg-alt);
   border-radius: var(--border-radius-xl);
-  height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hosting-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-md);
-  color: var(--color-text-light);
-}
-
-.hosting-placeholder-icon {
-  font-size: 4rem;
+  box-shadow: var(--shadow-2xl);
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 /* How It Works Section */
@@ -509,7 +488,7 @@
   margin-bottom: var(--spacing-md);
 }
 
-.devweb-cta-info > p {
+.devweb-cta-info>p {
   opacity: 0.9;
   margin-bottom: var(--spacing-xl);
   font-size: var(--font-size-lg);
@@ -555,26 +534,26 @@
   .packages-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .package-card:nth-child(3) {
     grid-column: 1 / -1;
     max-width: 400px;
     margin: 0 auto;
   }
-  
+
   .package-card-popular {
     transform: none;
   }
-  
+
   .process-timeline {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-xl);
   }
-  
+
   .process-timeline::before {
     display: none;
   }
-  
+
   .benefits-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -584,59 +563,59 @@
   .devweb-hero h1 {
     font-size: var(--font-size-3xl);
   }
-  
+
   .devweb-hero-subtitle {
     font-size: var(--font-size-base);
   }
-  
+
   .devweb-hero-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .devweb-hero-buttons .btn {
     width: 100%;
     max-width: 300px;
   }
-  
+
   .audience-bullets {
     grid-template-columns: 1fr;
   }
-  
+
   .packages-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .package-card:nth-child(3) {
     max-width: 100%;
   }
-  
+
   .hosting-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .hosting-image {
     order: -1;
     height: 250px;
   }
-  
+
   .process-timeline {
     grid-template-columns: 1fr;
     gap: var(--spacing-lg);
   }
-  
+
   .benefits-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .devweb-cta-content {
     grid-template-columns: 1fr;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .section-header h2 {
     font-size: var(--font-size-2xl);
   }
@@ -646,7 +625,7 @@
   .devweb-hero h1 {
     font-size: var(--font-size-2xl);
   }
-  
+
   .process-step-number {
     width: 40px;
     height: 40px;
