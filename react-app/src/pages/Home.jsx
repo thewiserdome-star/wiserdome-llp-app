@@ -14,7 +14,7 @@ const PRICING_CONFIG = {
 
 export default function Home() {
   const [billingPeriod, setBillingPeriod] = useState('monthly');
-  
+
   // Helper function to calculate price based on billing period
   const getPrice = (monthlyPrice) => {
     if (billingPeriod === 'annual') {
@@ -22,7 +22,7 @@ export default function Home() {
     }
     return monthlyPrice.toLocaleString();
   };
-  
+
   return (
     <div className="home-page">
       {/* Hero Section - Two Column Layout */}
@@ -35,7 +35,7 @@ export default function Home() {
               <p className="hero-subtitle">
                 Complete peace of mind for NRIs and busy professionals. We manage your property, tenants, and maintenance while you focus on your life abroad.
               </p>
-              
+
               <div className="hero-buttons">
                 <Link to="/contact" className="btn btn-accent btn-lg">
                   Book Free Property Audit
@@ -44,7 +44,7 @@ export default function Home() {
                   Schedule a Callback
                 </Link>
               </div>
-              
+
               {/* Trust Badges */}
               <div className="hero-trust-badges">
                 <div className="trust-badge">
@@ -61,16 +61,14 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
-            {/* Right Column - Hero Image Placeholder */}
+
+            {/* Right Column - Hero Image */}
             <div className="hero-image">
-              <div className="hero-image-placeholder">
-                <div className="placeholder-content">
-                  <span className="placeholder-icon">🏡</span>
-                  <span className="placeholder-text">Hero Image</span>
-                  <span className="placeholder-subtext">NRI Property Care Illustration</span>
-                </div>
-              </div>
+              <img
+                src="https://saraekadant.blob.core.windows.net/mediawiserdome/wiserdome_homepage_hero_image.png"
+                alt="Wiserdome Property Management"
+                className="hero-img"
+              />
             </div>
           </div>
         </div>
@@ -84,7 +82,7 @@ export default function Home() {
             <h2>Trusted by NRIs Worldwide</h2>
             <p>We specialize in serving Non-Resident Indians and working professionals who need a reliable partner to care for their residential or commercial assets in India.</p>
           </div>
-          
+
           <div className="audience-grid">
             <div className="audience-card">
               <div className="audience-icon">
@@ -118,7 +116,7 @@ export default function Home() {
             <span className="section-label">Our Expertise</span>
             <h2>Why Choose Wiserdome?</h2>
           </div>
-          
+
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-card-icon">🏠</div>
@@ -151,7 +149,7 @@ export default function Home() {
               <p>Planning to sell or renovate? We guide you through the entire process.</p>
             </div>
           </div>
-          
+
           {/* Feature image placeholder */}
           <div className="feature-image-section">
             <div className="feature-image-placeholder">
@@ -169,7 +167,7 @@ export default function Home() {
             <h2>You're Always in Control</h2>
             <p>Stay informed about your property with real-time updates and comprehensive reports.</p>
           </div>
-          
+
           <div className="control-grid">
             <div className="control-card">
               <div className="control-icon">📱</div>
@@ -190,7 +188,7 @@ export default function Home() {
               <span className="control-badge">On Demand</span>
             </div>
           </div>
-          
+
           <p className="control-privacy-note">
             🔒 Your data is secure. We follow strict data privacy protocols and never share your information with third parties.
           </p>
@@ -205,11 +203,11 @@ export default function Home() {
             <h2>Simple, Transparent Pricing</h2>
             <p>Choose a plan that fits your needs. No hidden fees.</p>
           </div>
-          
+
           {/* Billing Toggle */}
           <div className="pricing-toggle">
             <span className={billingPeriod === 'monthly' ? 'active' : ''}>Monthly</span>
-            <button 
+            <button
               className={`toggle-switch ${billingPeriod === 'annual' ? 'active' : ''}`}
               onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'annual' : 'monthly')}
               aria-label="Toggle billing period"
@@ -220,7 +218,7 @@ export default function Home() {
               Annual <span className="save-badge">Save 15%</span>
             </span>
           </div>
-          
+
           <div className="pricing-grid">
             {/* Basic Plan */}
             <div className="pricing-card">
@@ -242,7 +240,7 @@ export default function Home() {
               </ul>
               <Link to="/pricing" className="btn btn-outline full-width">View Details</Link>
             </div>
-            
+
             {/* Standard Plan - Popular */}
             <div className="pricing-card pricing-card-popular">
               <div className="popular-badge">Most Popular</div>
@@ -265,7 +263,7 @@ export default function Home() {
               </ul>
               <Link to="/pricing" className="btn btn-primary full-width">View Details</Link>
             </div>
-            
+
             {/* Premium Plan */}
             <div className="pricing-card">
               <div className="pricing-card-header">
@@ -288,7 +286,7 @@ export default function Home() {
               <Link to="/pricing" className="btn btn-outline full-width">View Details</Link>
             </div>
           </div>
-          
+
           <p className="pricing-note">
             * Pricing subject to property audit. Final quote shared after assessment.
           </p>
@@ -330,7 +328,7 @@ export default function Home() {
             <h2>How It Works</h2>
             <p>Get started in 3 simple steps</p>
           </div>
-          
+
           <div className="steps-timeline">
             <div className="step">
               <div className="step-number">1</div>
@@ -359,7 +357,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
+
           <div className="steps-cta">
             <Link to="/contact" className="btn btn-accent btn-lg">Get Started Today</Link>
           </div>
