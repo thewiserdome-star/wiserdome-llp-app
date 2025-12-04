@@ -104,6 +104,11 @@ export async function getDeveloperPackages() {
     // Transform data to match UI expectation (features array of strings)
     return packages.map(pkg => ({
       ...pkg,
+      // Map snake_case DB fields to camelCase UI fields
+      isPopular: pkg.is_popular,
+      priceLabel: pkg.price_label,
+      priceNote: pkg.price_note,
+      idealFor: pkg.ideal_for,
       features: pkg.features
         .sort((a, b) => a.display_order - b.display_order)
         .map(f => f.feature_text)
