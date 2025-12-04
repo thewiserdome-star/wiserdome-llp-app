@@ -152,9 +152,11 @@ export default function Home() {
 
           {/* Feature image placeholder */}
           <div className="feature-image-section">
-            <div className="feature-image-placeholder">
-              <span>Image: Property Manager Inspection</span>
-            </div>
+            <img
+              src="https://saraekadant.blob.core.windows.net/mediawiserdome/wiserdome_homepage_%20feature_image.png"
+              alt="Property Manager Inspection"
+              className="feature-img"
+            />
           </div>
         </div>
       </section>

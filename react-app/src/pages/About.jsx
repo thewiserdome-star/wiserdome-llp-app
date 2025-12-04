@@ -23,9 +23,12 @@ export default function About() {
               <p className="mb-md">Wiserdome was founded with a single purpose: to bridge the gap between NRIs and their homes in India. We understand the anxiety of managing a valuable asset from thousands of miles away—the sleepless nights worrying about tenants, maintenance issues, or legal complications.</p>
               <p>Our mission is to bring professional, corporate-grade property management to the Indian residential sector, ensuring transparency, legal safety, and asset appreciation for our global clients.</p>
             </div>
-            <div className="about-image-placeholder">
-              <span className="placeholder-icon">🏢</span>
-              <span>Team Meeting</span>
+            <div className="about-image-container">
+              <img
+                src="https://saraekadant.blob.core.windows.net/mediawiserdome/wiserdome_about_page_team_image.png"
+                alt="Wiserdome Team Meeting"
+                className="about-img"
+              />
             </div>
           </div>
         </div>
@@ -84,7 +87,7 @@ export default function About() {
           </div>
         </div>
       </section>
-      
+
       {/* Stats Section */}
       <section className="section section-bg-primary">
         <div className="container">
@@ -108,7 +111,7 @@ export default function About() {
           </div>
         </div>
       </section>
-      
+
       {/* CTA Section */}
       <section className="section about-cta-section">
         <div className="container text-center">
