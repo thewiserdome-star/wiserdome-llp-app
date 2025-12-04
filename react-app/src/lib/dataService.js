@@ -31,8 +31,7 @@ export async function submitContactInquiry(data) {
         property_city: data.city,
         property_type: data.type,
         message: data.message
-      }])
-      .select();
+      }]);
 
     if (error) {
       console.error('Error submitting contact inquiry:', error);
@@ -68,8 +67,7 @@ export async function submitDeveloperWebsiteInquiry(data) {
         projects_per_year: data.projectsPerYear,
         current_website: data.currentWebsite,
         message: data.message
-      }])
-      .select();
+      }]);
 
     if (error) {
       console.error('Error submitting developer website inquiry:', error);
@@ -81,6 +79,218 @@ export async function submitDeveloperWebsiteInquiry(data) {
     console.error('Exception submitting developer website inquiry:', err);
     return { success: false, message: ERROR_MESSAGE };
   }
+}
+
+export async function getDeveloperPackages() {
+  if (!supabase) {
+    return getStaticDeveloperPackages();
+  }
+
+  try {
+    const { data: packages, error } = await supabase
+      .from('developer_website_packages')
+      .select(`
+        *,
+        features:developer_package_features(*)
+      `)
+      .eq('is_active', true)
+      .order('display_order');
+
+    if (error) {
+      console.error('Error fetching developer packages:', error);
+      return getStaticDeveloperPackages();
+    }
+
+    // Transform data to match UI expectation (features array of strings)
+    return packages.map(pkg => ({
+      ...pkg,
+      // Map snake_case DB fields to camelCase UI fields
+      isPopular: pkg.is_popular,
+      priceLabel: pkg.price_label,
+      priceNote: pkg.price_note,
+      idealFor: pkg.ideal_for,
+      features: pkg.features
+        .sort((a, b) => a.display_order - b.display_order)
+        .map(f => f.feature_text)
+    }));
+  } catch (err) {
+    console.error('Exception fetching developer packages:', err);
+    return getStaticDeveloperPackages();
+  }
+}
+
+export async function saveDeveloperPackage(packageData) {
+  if (!supabase) return { success: false, message: 'Supabase not configured' };
+
+  try {
+    // 1. Separate features from package data
+    const { features, id, ...pkgDetails } = packageData;
+    let packageId = id;
+
+    // Generate slug if not present (simple version)
+    if (!pkgDetails.slug && pkgDetails.name) {
+      pkgDetails.slug = pkgDetails.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+      // Append random string to ensure uniqueness if needed, 
+      // but for now let's rely on the name being unique enough or let DB error out if duplicate
+    }
+
+    // 2. Insert or Update Package
+    if (packageId) {
+      // Update existing
+      const { error: pkgError } = await supabase
+        .from('developer_website_packages')
+        .update(pkgDetails)
+        .eq('id', packageId);
+
+      if (pkgError) throw pkgError;
+    } else {
+      // Insert new
+      const { data: newPkg, error: pkgError } = await supabase
+        .from('developer_website_packages')
+        .insert([pkgDetails])
+        .select()
+        .single();
+
+      if (pkgError) throw pkgError;
+      packageId = newPkg.id;
+    }
+
+    // 3. Handle Features
+    // First, delete existing features for this package
+    const { error: deleteError } = await supabase
+      .from('developer_package_features')
+      .delete()
+      .eq('package_id', packageId);
+
+    if (deleteError) throw deleteError;
+
+    // Then insert new features
+    if (features && features.length > 0) {
+      // Parse features string if it comes from textarea (newline separated)
+      const featureList = Array.isArray(features)
+        ? features
+        : features.split('\n').filter(f => f.trim());
+
+      const featureRows = featureList.map((text, index) => ({
+        package_id: packageId,
+        feature_text: text.trim(),
+        display_order: index + 1
+      }));
+
+      if (featureRows.length > 0) {
+        const { error: featureError } = await supabase
+          .from('developer_package_features')
+          .insert(featureRows);
+
+        if (featureError) throw featureError;
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving developer package:', error);
+    return { success: false, message: error.message };
+  }
+}
+
+export async function deleteDeveloperPackage(packageId) {
+  if (!supabase) return { success: false, message: 'Supabase not configured' };
+
+  try {
+    // Features will be deleted automatically via cascade if configured, 
+    // but good practice to delete them explicitly or rely on FK cascade.
+    // Assuming FK cascade is NOT set up, we delete features first.
+
+    // 1. Delete features
+    const { error: featError } = await supabase
+      .from('developer_package_features')
+      .delete()
+      .eq('package_id', packageId);
+
+    if (featError) throw featError;
+
+    // 2. Delete package
+    const { error: pkgError } = await supabase
+      .from('developer_website_packages')
+      .delete()
+      .eq('id', packageId);
+
+    if (pkgError) throw pkgError;
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting developer package:', error);
+    return { success: false, message: error.message };
+  }
+}
+
+function getStaticDeveloperPackages() {
+  return [
+    {
+      id: 'starter',
+      name: 'Starter Project Site',
+      tagline: 'Perfect for single project launches',
+      priceLabel: 'One-time from',
+      price: '₹49,999',
+      priceNote: '+ ₹2,999/mo hosting',
+      idealFor: 'New property launches, individual project microsites, and builders testing digital marketing.',
+      features: [
+        'Single project landing page',
+        'Project overview & highlights',
+        'Interactive location map',
+        'Image gallery with lightbox',
+        'Lead capture form with email alerts',
+        'Basic analytics dashboard',
+        'Mobile-responsive design',
+        'SSL security certificate'
+      ],
+      isPopular: false
+    },
+    {
+      id: 'growth',
+      name: 'Growth Multi-Project Site',
+      tagline: 'Scale your digital presence',
+      priceLabel: 'One-time from',
+      price: '₹1,49,999',
+      priceNote: '+ ₹5,999/mo hosting',
+      idealFor: 'Growing developers with multiple ongoing projects who need a centralized digital hub.',
+      features: [
+        'Multi-project pages (up to 10)',
+        'Property listing grid with filters',
+        'Blog/news section for updates',
+        'Advanced SEO setup & optimization',
+        'CRM/lead integration hooks',
+        'Virtual tour embedding',
+        'Social media integration',
+        'Priority email support'
+      ],
+      isPopular: true
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise Developer Suite',
+      tagline: 'Complete digital transformation',
+      priceLabel: 'Custom pricing from',
+      price: '₹3,99,999',
+      priceNote: '+ custom hosting SLA',
+      idealFor: 'Large developers and builders with multi-city portfolios requiring enterprise-grade solutions.',
+      features: [
+        'Custom design system & branding',
+        'Unlimited project pages',
+        'Multi-city portfolio management',
+        'CRM & marketing tool integrations',
+        'Dedicated account manager',
+        'SLA-backed hosting (99.9% uptime)',
+        '24/7 priority support',
+        'Advanced analytics & reporting'
+      ],
+      isPopular: false
+    }
+  ];
 }
 
 // ============================================

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { saveDeveloperPackage, deleteDeveloperPackage } from '../../lib/dataService';
 
 export default function AdminDeveloperWebsites() {
   const [inquiries, setInquiries] = useState([]);
@@ -232,7 +233,7 @@ export default function AdminDeveloperWebsites() {
 
   const handlePackageSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!isSupabaseConfigured()) {
       alert('Supabase is not configured. Changes will not be saved.');
       setShowPackageModal(false);
@@ -240,6 +241,7 @@ export default function AdminDeveloperWebsites() {
     }
 
     const packageData = {
+      id: editingPackage ? editingPackage.id : null,
       name: packageFormData.name,
       tagline: packageFormData.tagline,
       price_label: packageFormData.price_label,
@@ -253,21 +255,12 @@ export default function AdminDeveloperWebsites() {
     };
 
     try {
-      if (editingPackage) {
-        const { error } = await supabase
-          .from('developer_website_packages')
-          .update(packageData)
-          .eq('id', editingPackage.id);
-        
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('developer_website_packages')
-          .insert([packageData]);
-        
-        if (error) throw error;
+      const result = await saveDeveloperPackage(packageData);
+
+      if (!result.success) {
+        throw new Error(result.message);
       }
-      
+
       setShowPackageModal(false);
       loadPackages();
     } catch (error) {
@@ -278,19 +271,19 @@ export default function AdminDeveloperWebsites() {
 
   const handleDeletePackage = async (pkg) => {
     if (!confirm(`Are you sure you want to delete "${pkg.name}"?`)) return;
-    
+
     if (!isSupabaseConfigured()) {
       alert('Supabase is not configured. Changes will not be saved.');
       return;
     }
 
     try {
-      const { error } = await supabase
-        .from('developer_website_packages')
-        .delete()
-        .eq('id', pkg.id);
-      
-      if (error) throw error;
+      const result = await deleteDeveloperPackage(pkg.id);
+
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
       loadPackages();
     } catch (error) {
       console.error('Error deleting package:', error);
@@ -307,13 +300,13 @@ export default function AdminDeveloperWebsites() {
       <div className="admin-page-header">
         <h1>Developer Websites</h1>
         <div className="tab-buttons">
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'inquiries' ? 'active' : ''}`}
             onClick={() => setActiveTab('inquiries')}
           >
             📧 Inquiries ({inquiries.length})
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'packages' ? 'active' : ''}`}
             onClick={() => setActiveTab('packages')}
           >
@@ -356,7 +349,7 @@ export default function AdminDeveloperWebsites() {
                   <td>{getStatusBadge(inquiry.status)}</td>
                   <td>
                     <div className="action-buttons">
-                      <button 
+                      <button
                         className="btn-icon"
                         onClick={() => setSelectedInquiry(inquiry)}
                         title="View Details"
@@ -422,15 +415,15 @@ export default function AdminDeveloperWebsites() {
                     <td>{pkg.is_active ? '✅ Active' : '❌ Inactive'}</td>
                     <td>
                       <div className="action-buttons">
-                        <button 
-                          className="btn-icon btn-edit" 
+                        <button
+                          className="btn-icon btn-edit"
                           onClick={() => openEditPackageModal(pkg)}
                           title="Edit"
                         >
                           ✏️
                         </button>
-                        <button 
-                          className="btn-icon btn-delete" 
+                        <button
+                          className="btn-icon btn-delete"
                           onClick={() => handleDeletePackage(pkg)}
                           title="Delete"
                         >
@@ -454,7 +447,7 @@ export default function AdminDeveloperWebsites() {
               <h2>Inquiry Details</h2>
               <button className="modal-close" onClick={() => setSelectedInquiry(null)}>×</button>
             </div>
-            
+
             <div className="inquiry-details">
               <div className="detail-row">
                 <strong>Company:</strong>
@@ -499,10 +492,10 @@ export default function AdminDeveloperWebsites() {
                 <span>{formatDate(selectedInquiry.created_at)}</span>
               </div>
             </div>
-            
+
             <div className="modal-footer">
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 onClick={() => setSelectedInquiry(null)}
               >
                 Close
@@ -520,7 +513,7 @@ export default function AdminDeveloperWebsites() {
               <h2>{editingPackage ? 'Edit Package' : 'Add Package'}</h2>
               <button className="modal-close" onClick={() => setShowPackageModal(false)}>×</button>
             </div>
-            
+
             <form onSubmit={handlePackageSubmit}>
               <div className="form-row">
                 <div className="form-group">
@@ -546,7 +539,7 @@ export default function AdminDeveloperWebsites() {
                   />
                 </div>
               </div>
-              
+
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Price Label</label>
@@ -571,7 +564,7 @@ export default function AdminDeveloperWebsites() {
                   />
                 </div>
               </div>
-              
+
               <div className="form-group">
                 <label className="form-label">Price Note</label>
                 <input
@@ -583,7 +576,7 @@ export default function AdminDeveloperWebsites() {
                   placeholder="e.g., + ₹2,999/mo hosting"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label className="form-label">Ideal For</label>
                 <input
@@ -595,7 +588,7 @@ export default function AdminDeveloperWebsites() {
                   placeholder="Description of target customer"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label className="form-label">Features (one per line)</label>
                 <textarea
@@ -607,7 +600,7 @@ export default function AdminDeveloperWebsites() {
                   placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
                 />
               </div>
-              
+
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Display Order</label>
@@ -640,7 +633,7 @@ export default function AdminDeveloperWebsites() {
                   </label>
                 </div>
               </div>
-              
+
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowPackageModal(false)}>
                   Cancel
