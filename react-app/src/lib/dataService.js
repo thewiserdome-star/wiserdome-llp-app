@@ -824,8 +824,10 @@ export async function validateSetPasswordToken(token) {
     }
 
     // Check if token has expired
-    const expiresAt = new Date(owner.set_password_token_expires_at);
-    if (expiresAt < new Date()) {
+    // Use UTC timestamps for consistent comparison across timezones
+    const expiresAt = new Date(owner.set_password_token_expires_at).getTime();
+    const now = Date.now();
+    if (expiresAt < now) {
       return { valid: false, message: 'This link has expired. Please contact support for a new one.' };
     }
 
@@ -884,8 +886,13 @@ export async function setOwnerPassword(token, password) {
     });
 
     if (signUpError) {
-      // If user already exists, try to update the password
-      if (signUpError.message.includes('already registered')) {
+      // Check if user already exists - Supabase uses code 'user_already_exists' or status 422
+      // Also check message as fallback for older versions
+      const isUserExists = signUpError.code === 'user_already_exists' ||
+                          signUpError.status === 422 ||
+                          (signUpError.message && signUpError.message.toLowerCase().includes('already registered'));
+      
+      if (isUserExists) {
         // Note: Updating existing user's password requires admin privileges
         // For this flow, we'll inform the user to use the password reset flow
         return { 

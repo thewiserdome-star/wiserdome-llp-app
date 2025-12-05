@@ -277,9 +277,26 @@ export default function AdminPropertyOwners() {
                 />
                 <button 
                   className="btn btn-primary copy-btn"
-                  onClick={() => {
-                    navigator.clipboard.writeText(approvalModal.setPasswordLink);
-                    alert('Link copied to clipboard!');
+                  onClick={async () => {
+                    try {
+                      if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(approvalModal.setPasswordLink);
+                        alert('Link copied to clipboard!');
+                      } else {
+                        // Fallback for older browsers or non-HTTPS contexts
+                        const textArea = document.createElement('textarea');
+                        textArea.value = approvalModal.setPasswordLink;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-9999px';
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        alert('Link copied to clipboard!');
+                      }
+                    } catch {
+                      alert('Failed to copy. Please select and copy the link manually.');
+                    }
                   }}
                 >
                   Copy Link
