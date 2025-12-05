@@ -149,11 +149,23 @@ The `property_owners` table has specific RLS policies to control access:
 2. **"Allow owners to read own data"** - Allows authenticated users to SELECT their own row by:
    - Matching `user_id` to `auth.uid()` (for linked accounts)
    - Matching `email` to the JWT email claim (case-insensitive)
-3. **"Allow authenticated users full access"** - Provides admin-level access
+3. **"Allow authenticated users full access"** - Provides admin-level access to all records
 
 **Important Note:** The owner SELECT policy avoids self-referencing queries in the USING clause
 to prevent infinite recursion errors. Never query the same table being protected within the
 policy USING clause.
+
+#### Troubleshooting: Admin Cannot See Property Owners
+
+If you login through `/admin` and cannot see property_owners records, run the migration:
+
+```sql
+-- Run this in Supabase SQL Editor
+-- File: db/migrations/001_fix_property_owners_rls.sql
+```
+
+This migration ensures the "Allow authenticated users full access on property_owners" policy exists,
+which is required for admin users to see all records.
 
 #### Testing RLS Policies
 
@@ -171,8 +183,8 @@ curl -X GET 'https://<project>.supabase.co/rest/v1/property_owners?email=ilike.t
   -H "Authorization: Bearer <access-token>"
 ```
 
-If you encounter "infinite recursion detected in policy" errors, apply the migration in
-`db/migrations/001_fix_property_owners_rls.sql`.
+If you encounter "infinite recursion detected in policy" errors or admins cannot see all records,
+apply the migration in `db/migrations/001_fix_property_owners_rls.sql`.
 
 ## Property Owner Portal
 
@@ -320,6 +332,12 @@ If you see "An error occurred. Please try again." when submitting the contact fo
    - Verify the schema was executed successfully
    - Check RLS policies allow reads
    - Check if seed data was inserted
+
+5. **Property owners not visible in admin dashboard**
+   - This is usually caused by missing RLS policies for authenticated users
+   - Run the migration: `db/migrations/001_fix_property_owners_rls.sql`
+   - The migration ensures the "Allow authenticated users full access on property_owners" policy exists
+   - After running the migration, login to `/admin` and navigate to Property Owners
 
 ### Getting Help
 
