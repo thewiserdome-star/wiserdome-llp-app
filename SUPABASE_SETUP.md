@@ -141,6 +141,39 @@ The schema includes RLS policies that:
 - Allow property owners to read their own properties
 - Restrict access to sensitive data for unauthenticated users
 
+#### Property Owners RLS Policy Details
+
+The `property_owners` table has specific RLS policies to control access:
+
+1. **"Allow anonymous signup requests"** - Allows anonymous users to INSERT new rows with status='pending'
+2. **"Allow owners to read own data"** - Allows authenticated users to SELECT their own row by:
+   - Matching `user_id` to `auth.uid()` (for linked accounts)
+   - Matching `email` to the JWT email claim (case-insensitive)
+3. **"Allow authenticated users full access"** - Provides admin-level access
+
+**Important Note:** The owner SELECT policy avoids self-referencing queries in the USING clause
+to prevent infinite recursion errors. Never query the same table being protected within the
+policy USING clause.
+
+#### Testing RLS Policies
+
+To verify the policies work correctly:
+
+```bash
+# Test fetching property owners (should not cause recursion error)
+curl -X GET 'https://<project>.supabase.co/rest/v1/property_owners?select=*' \
+  -H "apikey: <anon-key>" \
+  -H "Authorization: Bearer <access-token>"
+
+# Test fetching by email (returns array, may be empty)
+curl -X GET 'https://<project>.supabase.co/rest/v1/property_owners?email=ilike.test@example.com' \
+  -H "apikey: <anon-key>" \
+  -H "Authorization: Bearer <access-token>"
+```
+
+If you encounter "infinite recursion detected in policy" errors, apply the migration in
+`db/migrations/001_fix_property_owners_rls.sql`.
+
 ## Property Owner Portal
 
 Property owners can:
