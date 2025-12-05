@@ -772,12 +772,14 @@ export async function getOwnerByEmail(email) {
   }
 
   try {
-    // Use ilike for case-insensitive matching and trim the email
+    // Trim email and use exact match
     // Use maybeSingle() instead of single() to avoid PGRST116 error when no row found
+    const trimmedEmail = email.trim();
+    
     const { data: owner, error } = await supabase
       .from('property_owners')
       .select('*')
-      .ilike('email', email.trim())
+      .eq('email', trimmedEmail)
       .maybeSingle();
 
     if (error) {

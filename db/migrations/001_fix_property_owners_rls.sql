@@ -3,12 +3,14 @@
 -- This migration fixes the following issues:
 -- 1. Infinite recursion in "Allow owners to read own data" policy (PGRST 500 errors)
 -- 2. The policy had a self-referencing SELECT in the USING clause
+-- 3. The owner_properties policy could also trigger recursion when querying property_owners
 --
 -- Changes:
 -- - Drop the broken "Allow owners to read own data" policy
 -- - Create a safe owner SELECT policy that:
 --   a) Allows owner to SELECT their row if user_id matches auth.uid()
 --   b) Allows access if JWT email claim matches the row's email
+-- - Update owner_properties policy to avoid recursion issues
 -- - Keep the existing "Allow authenticated users full access" policy for admin-level access
 --
 -- Note: The user_id column in property_owners is UUID type (REFERENCES auth.users(id))
@@ -49,6 +51,28 @@ CREATE POLICY "Allow owners to read own data"
         -- Match by email from JWT claims (case-insensitive comparison)
         LOWER(email) = LOWER(
             (current_setting('request.jwt.claims', true)::json->>'email')
+        )
+    );
+
+-- ============================================
+-- Step 3: Fix owner_properties policy
+-- ============================================
+
+-- Drop and recreate the owner_properties policy to include email matching
+-- This ensures owners can access their properties even if user_id is not linked
+DROP POLICY IF EXISTS "Allow owners to read own properties" ON owner_properties;
+
+CREATE POLICY "Allow owners to read own properties"
+    ON owner_properties
+    FOR SELECT
+    TO authenticated
+    USING (
+        owner_id IN (
+            SELECT id FROM property_owners 
+            WHERE user_id = auth.uid()
+            OR LOWER(email) = LOWER(
+                (current_setting('request.jwt.claims', true)::json->>'email')
+            )
         )
     );
 

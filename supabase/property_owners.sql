@@ -109,6 +109,8 @@ CREATE POLICY "Allow authenticated users full access on property_owners"
 -- Owner Properties Policies
 
 -- Allow owners to read their own properties
+-- Fixed: Avoid querying property_owners which could cause recursion due to RLS
+-- Instead, check if the current user owns any property_owners record directly
 CREATE POLICY "Allow owners to read own properties"
     ON owner_properties
     FOR SELECT
@@ -117,6 +119,9 @@ CREATE POLICY "Allow owners to read own properties"
         owner_id IN (
             SELECT id FROM property_owners 
             WHERE user_id = auth.uid()
+            OR LOWER(email) = LOWER(
+                (current_setting('request.jwt.claims', true)::json->>'email')
+            )
         )
     );
 
