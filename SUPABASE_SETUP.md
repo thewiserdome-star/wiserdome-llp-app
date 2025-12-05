@@ -128,14 +128,31 @@ react-app/
 | `testimonials` | Stores customer testimonials |
 | `cities` | Stores supported cities |
 | `properties` | Stores property information (future use) |
+| `property_owners` | Stores property owner signups and approved owners |
+| `owner_properties` | Stores properties managed for owners by Wiserdome |
 
 ### Row Level Security (RLS)
 
 The schema includes RLS policies that:
 - Allow anonymous users to insert contact inquiries
+- Allow anonymous users to insert property owner signup requests
 - Allow anonymous users to read public data (pricing, services, FAQs, cities, testimonials)
 - Allow authenticated (admin) users full CRUD access to all tables
+- Allow property owners to read their own properties
 - Restrict access to sensitive data for unauthenticated users
+
+## Property Owner Portal
+
+Property owners can:
+1. Sign up at `/owner/signup` (pending admin approval)
+2. Login at `/owner/login` (after approval)
+3. View their managed properties at `/owner/dashboard`
+
+### Demo Mode
+
+In development mode, use these credentials for the owner portal:
+- Email: `owner@demo.com`
+- Password: `owner123`
 
 ## Admin Panel
 
@@ -149,7 +166,9 @@ When Supabase is not configured, the app runs in demo mode:
 
 ### Admin Features
 
-- **Dashboard**: Overview of all content
+- **Dashboard**: Overview of all content including pending owner signups
+- **Property Owners**: Approve or reject owner signup requests
+- **Owner Properties**: Add and manage properties for approved owners
 - **Pricing Plans**: Create, edit, delete pricing plans
 - **Services**: Manage service offerings
 - **FAQs**: Manage frequently asked questions

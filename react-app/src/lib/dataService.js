@@ -653,3 +653,351 @@ function getStaticTestimonials() {
     }
   ];
 }
+
+// ============================================
+// Property Owner Functions
+// ============================================
+
+/**
+ * Submit a property owner signup request
+ */
+export async function submitOwnerSignup(data) {
+  if (!supabase) {
+    console.log('Owner signup submission (Supabase not configured):', data);
+    return { success: true, message: 'Thank you for signing up! Your request is pending approval.' };
+  }
+
+  try {
+    const { data: result, error } = await supabase
+      .from('property_owners')
+      .insert([{
+        full_name: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        city: data.city,
+        country: data.country || 'India',
+        status: 'pending'
+      }]);
+
+    if (error) {
+      console.error('Error submitting owner signup:', error);
+      if (error.code === '23505') {
+        return { success: false, message: 'An account with this email already exists.' };
+      }
+      return { success: false, message: ERROR_MESSAGE };
+    }
+
+    return { success: true, message: 'Thank you for signing up! Your request is pending approval.', data: result };
+  } catch (err) {
+    console.error('Exception submitting owner signup:', err);
+    return { success: false, message: ERROR_MESSAGE };
+  }
+}
+
+/**
+ * Get all property owner signup requests (admin only)
+ */
+export async function getPropertyOwners(status = null) {
+  if (!supabase) {
+    return getStaticPropertyOwners();
+  }
+
+  try {
+    let query = supabase
+      .from('property_owners')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (status) {
+      query = query.eq('status', status);
+    }
+
+    const { data: owners, error } = await query;
+
+    if (error) {
+      console.error('Error fetching property owners:', error);
+      return getStaticPropertyOwners();
+    }
+
+    return owners;
+  } catch (err) {
+    console.error('Exception fetching property owners:', err);
+    return getStaticPropertyOwners();
+  }
+}
+
+/**
+ * Update property owner status (admin only)
+ */
+export async function updateOwnerStatus(ownerId, status, rejectionReason = null) {
+  if (!supabase) {
+    return { success: false, message: 'Supabase not configured' };
+  }
+
+  try {
+    const updateData = {
+      status,
+      ...(status === 'rejected' && rejectionReason ? { rejection_reason: rejectionReason } : {}),
+      ...(status === 'approved' ? { approved_at: new Date().toISOString() } : {})
+    };
+
+    const { error } = await supabase
+      .from('property_owners')
+      .update(updateData)
+      .eq('id', ownerId);
+
+    if (error) {
+      console.error('Error updating owner status:', error);
+      return { success: false, message: error.message };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error('Exception updating owner status:', err);
+    return { success: false, message: ERROR_MESSAGE };
+  }
+}
+
+/**
+ * Get owner by email (for login verification)
+ */
+export async function getOwnerByEmail(email) {
+  if (!supabase) {
+    return null;
+  }
+
+  try {
+    const { data: owner, error } = await supabase
+      .from('property_owners')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (error) {
+      console.error('Error fetching owner by email:', error);
+      return null;
+    }
+
+    return owner;
+  } catch (err) {
+    console.error('Exception fetching owner by email:', err);
+    return null;
+  }
+}
+
+/**
+ * Get properties for a specific owner
+ */
+export async function getOwnerProperties(ownerId) {
+  if (!supabase) {
+    return getStaticOwnerProperties();
+  }
+
+  try {
+    const { data: properties, error } = await supabase
+      .from('owner_properties')
+      .select('*')
+      .eq('owner_id', ownerId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching owner properties:', error);
+      return getStaticOwnerProperties();
+    }
+
+    return properties;
+  } catch (err) {
+    console.error('Exception fetching owner properties:', err);
+    return getStaticOwnerProperties();
+  }
+}
+
+/**
+ * Get all properties with owner info (admin only)
+ */
+export async function getAllOwnerProperties() {
+  if (!supabase) {
+    return [];
+  }
+
+  try {
+    const { data: properties, error } = await supabase
+      .from('owner_properties')
+      .select(`
+        *,
+        owner:property_owners(id, full_name, email, phone)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching all owner properties:', error);
+      return [];
+    }
+
+    return properties;
+  } catch (err) {
+    console.error('Exception fetching all owner properties:', err);
+    return [];
+  }
+}
+
+/**
+ * Add a property for an owner (admin only)
+ */
+export async function addOwnerProperty(propertyData) {
+  if (!supabase) {
+    return { success: false, message: 'Supabase not configured' };
+  }
+
+  try {
+    const { data: result, error } = await supabase
+      .from('owner_properties')
+      .insert([{
+        owner_id: propertyData.ownerId,
+        property_name: propertyData.propertyName,
+        property_type: propertyData.propertyType,
+        address: propertyData.address,
+        city: propertyData.city,
+        state: propertyData.state,
+        pincode: propertyData.pincode,
+        bedrooms: propertyData.bedrooms,
+        bathrooms: propertyData.bathrooms,
+        area_sqft: propertyData.areaSqft,
+        is_rented: propertyData.isRented || false,
+        monthly_rent: propertyData.monthlyRent,
+        tenant_name: propertyData.tenantName,
+        tenant_phone: propertyData.tenantPhone,
+        management_plan: propertyData.managementPlan,
+        management_start_date: propertyData.managementStartDate,
+        notes: propertyData.notes,
+        status: propertyData.status || 'active'
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding owner property:', error);
+      return { success: false, message: error.message };
+    }
+
+    return { success: true, data: result };
+  } catch (err) {
+    console.error('Exception adding owner property:', err);
+    return { success: false, message: ERROR_MESSAGE };
+  }
+}
+
+/**
+ * Update a property (admin only)
+ */
+export async function updateOwnerProperty(propertyId, propertyData) {
+  if (!supabase) {
+    return { success: false, message: 'Supabase not configured' };
+  }
+
+  try {
+    const { error } = await supabase
+      .from('owner_properties')
+      .update({
+        property_name: propertyData.propertyName,
+        property_type: propertyData.propertyType,
+        address: propertyData.address,
+        city: propertyData.city,
+        state: propertyData.state,
+        pincode: propertyData.pincode,
+        bedrooms: propertyData.bedrooms,
+        bathrooms: propertyData.bathrooms,
+        area_sqft: propertyData.areaSqft,
+        is_rented: propertyData.isRented,
+        monthly_rent: propertyData.monthlyRent,
+        tenant_name: propertyData.tenantName,
+        tenant_phone: propertyData.tenantPhone,
+        management_plan: propertyData.managementPlan,
+        management_start_date: propertyData.managementStartDate,
+        notes: propertyData.notes,
+        status: propertyData.status
+      })
+      .eq('id', propertyId);
+
+    if (error) {
+      console.error('Error updating owner property:', error);
+      return { success: false, message: error.message };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error('Exception updating owner property:', err);
+    return { success: false, message: ERROR_MESSAGE };
+  }
+}
+
+/**
+ * Delete a property (admin only)
+ */
+export async function deleteOwnerProperty(propertyId) {
+  if (!supabase) {
+    return { success: false, message: 'Supabase not configured' };
+  }
+
+  try {
+    const { error } = await supabase
+      .from('owner_properties')
+      .delete()
+      .eq('id', propertyId);
+
+    if (error) {
+      console.error('Error deleting owner property:', error);
+      return { success: false, message: error.message };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error('Exception deleting owner property:', err);
+    return { success: false, message: ERROR_MESSAGE };
+  }
+}
+
+// Static fallback data for property owners
+function getStaticPropertyOwners() {
+  return [
+    {
+      id: '1',
+      full_name: 'John Smith',
+      email: 'john.smith@example.com',
+      phone: '+1-555-0123',
+      city: 'Mumbai',
+      status: 'pending',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: '2',
+      full_name: 'Sarah Johnson',
+      email: 'sarah.j@example.com',
+      phone: '+1-555-0456',
+      city: 'Bangalore',
+      status: 'approved',
+      created_at: new Date().toISOString()
+    }
+  ];
+}
+
+// Static fallback data for owner properties
+function getStaticOwnerProperties() {
+  return [
+    {
+      id: '1',
+      property_name: 'Sea View Apartment',
+      property_type: 'apartment',
+      address: '123 Marine Drive',
+      city: 'Mumbai',
+      bedrooms: 3,
+      bathrooms: 2,
+      area_sqft: 1500,
+      is_rented: true,
+      monthly_rent: 45000,
+      management_plan: 'standard',
+      status: 'active'
+    }
+  ];
+}
