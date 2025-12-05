@@ -59,10 +59,10 @@ export function AuthProvider({ children }) {
     redirectToLogin();
   }, [clearLocalSupabaseTokens, redirectToLogin]);
 
-  // Check if user is an approved owner
+  // Check if user is an active owner (password has been set)
   const checkOwnerStatus = useCallback(async (email) => {
     const ownerData = await getOwnerByEmail(email);
-    if (ownerData && ownerData.status === 'approved') {
+    if (ownerData && ownerData.status === 'active') {
       setOwner(ownerData);
       return ownerData;
     }
@@ -207,7 +207,7 @@ export function AuthProvider({ children }) {
           id: 'demo-owner',
           full_name: 'Demo Owner',
           email: 'owner@demo.com',
-          status: 'approved'
+          status: 'active'
         };
         setOwner(demoOwner);
         setUser({ email, id: 'demo-owner' });
@@ -216,7 +216,7 @@ export function AuthProvider({ children }) {
       return { error: { message: isDevelopment ? 'Invalid credentials' : 'Supabase not configured' } };
     }
 
-    // First check if user is an approved owner
+    // First check if user is an active owner
     const ownerData = await getOwnerByEmail(email);
     
     if (!ownerData) {
@@ -227,8 +227,16 @@ export function AuthProvider({ children }) {
       return { error: { message: 'Your account is pending approval. Please wait for admin approval.' } };
     }
     
+    if (ownerData.status === 'approved') {
+      return { error: { message: 'Your account is approved but you need to set your password. Please check your email for the password setup link.' } };
+    }
+    
     if (ownerData.status === 'rejected') {
       return { error: { message: 'Your account application was rejected. Please contact support.' } };
+    }
+
+    if (ownerData.status !== 'active') {
+      return { error: { message: 'Your account is not active. Please contact support.' } };
     }
 
     // Now sign in with Supabase
@@ -281,7 +289,7 @@ export function AuthProvider({ children }) {
     ownerSignIn,
     ownerSignOut,
     isAuthenticated: !!user,
-    isOwner: !!owner && owner.status === 'approved',
+    isOwner: !!owner && owner.status === 'active',
   }), [user, owner, loading, signIn, signOut, ownerSignIn, ownerSignOut]);
 
   return (

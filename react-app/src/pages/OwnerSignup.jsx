@@ -54,10 +54,10 @@ export default function OwnerSignup() {
             <h1>Registration Successful!</h1>
             <p>Thank you for registering with Wiserdome.</p>
             <p>Your signup request has been submitted and is pending approval by our admin team.</p>
-            <p>You will receive an email once your account is approved.</p>
+            <p><strong>What happens next?</strong></p>
+            <p>Once approved, you will receive an email with a link to set your password and activate your account.</p>
             <div className="success-actions">
               <Link to="/" className="btn btn-primary">Return to Home</Link>
-              <Link to="/owner/login" className="btn btn-outline">Go to Login</Link>
             </div>
           </div>
         </div>

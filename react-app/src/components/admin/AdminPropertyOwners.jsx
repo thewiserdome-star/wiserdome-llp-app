@@ -9,6 +9,7 @@ export default function AdminPropertyOwners() {
   const [rejectModal, setRejectModal] = useState({ show: false, ownerId: null });
   const [rejectionReason, setRejectionReason] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [approvalModal, setApprovalModal] = useState({ show: false, ownerName: '', ownerEmail: '', setPasswordLink: '' });
 
   useEffect(() => {
     let isMounted = true;
@@ -34,6 +35,15 @@ export default function AdminPropertyOwners() {
     setActionLoading(ownerId);
     const result = await updateOwnerStatus(ownerId, 'approved');
     if (result.success) {
+      // Show the set-password link modal
+      const baseUrl = window.location.origin;
+      const setPasswordLink = `${baseUrl}/owner/set-password?token=${result.setPasswordToken}`;
+      setApprovalModal({
+        show: true,
+        ownerName: result.ownerName || 'Owner',
+        ownerEmail: result.ownerEmail || '',
+        setPasswordLink
+      });
       refreshData();
     } else {
       alert('Error approving owner: ' + result.message);
@@ -63,7 +73,8 @@ export default function AdminPropertyOwners() {
   const getStatusBadge = (status) => {
     const badges = {
       pending: { class: 'badge-warning', text: 'Pending' },
-      approved: { class: 'badge-success', text: 'Approved' },
+      approved: { class: 'badge-info', text: 'Awaiting Password' },
+      active: { class: 'badge-success', text: 'Active' },
       rejected: { class: 'badge-danger', text: 'Rejected' }
     };
     return badges[status] || { class: 'badge-default', text: status };
@@ -237,6 +248,59 @@ export default function AdminPropertyOwners() {
         </div>
       )}
 
+      {/* Approval Success Modal */}
+      {approvalModal.show && (
+        <div className="modal-overlay" onClick={() => setApprovalModal({ show: false, ownerName: '', ownerEmail: '', setPasswordLink: '' })}>
+          <div className="modal-content approval-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>✓ Owner Approved</h2>
+              <button 
+                className="modal-close" 
+                onClick={() => setApprovalModal({ show: false, ownerName: '', ownerEmail: '', setPasswordLink: '' })}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="success-message">
+                <strong>{approvalModal.ownerName}</strong> has been approved successfully!
+              </p>
+              <p className="instruction-text">
+                Send this password setup link to the owner ({approvalModal.ownerEmail}):
+              </p>
+              <div className="link-container">
+                <input 
+                  type="text" 
+                  className="link-input" 
+                  value={approvalModal.setPasswordLink} 
+                  readOnly 
+                />
+                <button 
+                  className="btn btn-primary copy-btn"
+                  onClick={() => {
+                    navigator.clipboard.writeText(approvalModal.setPasswordLink);
+                    alert('Link copied to clipboard!');
+                  }}
+                >
+                  Copy Link
+                </button>
+              </div>
+              <p className="note-text">
+                ⚠️ This link expires in 72 hours. The owner must use this link to set their password and activate their account.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-primary"
+                onClick={() => setApprovalModal({ show: false, ownerName: '', ownerEmail: '', setPasswordLink: '' })}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         .filter-tabs {
           display: flex;
@@ -269,6 +333,10 @@ export default function AdminPropertyOwners() {
         .badge-warning {
           background: #fff3cd;
           color: #856404;
+        }
+        .badge-info {
+          background: #d1ecf1;
+          color: #0c5460;
         }
         .badge-success {
           background: #d4edda;
@@ -315,6 +383,41 @@ export default function AdminPropertyOwners() {
           text-align: center;
           padding: var(--spacing-2xl);
           color: var(--color-text-light);
+        }
+        .approval-modal {
+          max-width: 600px;
+        }
+        .approval-modal .success-message {
+          color: var(--color-success);
+          font-size: var(--font-size-lg);
+          margin-bottom: var(--spacing-md);
+        }
+        .approval-modal .instruction-text {
+          color: var(--color-text);
+          margin-bottom: var(--spacing-sm);
+        }
+        .approval-modal .link-container {
+          display: flex;
+          gap: var(--spacing-sm);
+          margin-bottom: var(--spacing-md);
+        }
+        .approval-modal .link-input {
+          flex: 1;
+          padding: var(--spacing-sm) var(--spacing-md);
+          border: 1px solid var(--color-border);
+          border-radius: var(--border-radius-md);
+          font-size: var(--font-size-sm);
+          background: var(--color-bg-light);
+        }
+        .approval-modal .copy-btn {
+          white-space: nowrap;
+        }
+        .approval-modal .note-text {
+          font-size: var(--font-size-sm);
+          color: var(--color-text-light);
+          background: #fff3cd;
+          padding: var(--spacing-sm) var(--spacing-md);
+          border-radius: var(--border-radius-md);
         }
       `}</style>
     </div>

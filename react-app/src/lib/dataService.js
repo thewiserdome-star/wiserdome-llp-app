@@ -728,7 +728,18 @@ export async function getPropertyOwners(status = null) {
 }
 
 /**
+ * Generate a secure random token for password setup
+ * Uses Web Crypto API for cryptographically secure randomness
+ */
+function generateSecureToken() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
  * Update property owner status (admin only)
+ * When approving, generates a one-time set-password token
  */
 export async function updateOwnerStatus(ownerId, status, rejectionReason = null) {
   if (!supabase) {
@@ -742,19 +753,174 @@ export async function updateOwnerStatus(ownerId, status, rejectionReason = null)
       ...(status === 'approved' ? { approved_at: new Date().toISOString() } : {})
     };
 
-    const { error } = await supabase
+    // When approving, generate a set-password token with 72-hour expiry
+    let setPasswordToken = null;
+    if (status === 'approved') {
+      setPasswordToken = generateSecureToken();
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 72); // 72-hour expiry
+      
+      updateData.set_password_token = setPasswordToken;
+      updateData.set_password_token_expires_at = expiresAt.toISOString();
+    }
+
+    const { data, error } = await supabase
       .from('property_owners')
       .update(updateData)
-      .eq('id', ownerId);
+      .eq('id', ownerId)
+      .select('email, full_name')
+      .single();
 
     if (error) {
       console.error('Error updating owner status:', error);
       return { success: false, message: error.message };
     }
 
-    return { success: true };
+    // Return the token and owner info for email notification
+    return { 
+      success: true, 
+      setPasswordToken,
+      ownerEmail: data?.email,
+      ownerName: data?.full_name
+    };
   } catch (err) {
     console.error('Exception updating owner status:', err);
+    return { success: false, message: ERROR_MESSAGE };
+  }
+}
+
+/**
+ * Validate a set-password token
+ * Returns owner info if token is valid and not expired
+ */
+export async function validateSetPasswordToken(token) {
+  if (!supabase) {
+    // Demo mode for development
+    const isDevelopment = typeof import.meta !== 'undefined' && import.meta.env?.DEV;
+    if (isDevelopment && token === 'demo-token') {
+      return { valid: true, email: 'owner@demo.com', fullName: 'Demo Owner' };
+    }
+    return { valid: false, message: 'Service not configured' };
+  }
+
+  if (!token) {
+    return { valid: false, message: 'No token provided' };
+  }
+
+  try {
+    const { data: owner, error } = await supabase
+      .from('property_owners')
+      .select('id, email, full_name, status, set_password_token_expires_at')
+      .eq('set_password_token', token)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error validating token:', error);
+      return { valid: false, message: 'Error validating token' };
+    }
+
+    if (!owner) {
+      return { valid: false, message: 'Invalid token' };
+    }
+
+    // Check if token has expired
+    const expiresAt = new Date(owner.set_password_token_expires_at);
+    if (expiresAt < new Date()) {
+      return { valid: false, message: 'This link has expired. Please contact support for a new one.' };
+    }
+
+    // Check if password was already set (status should be 'approved', not 'active')
+    if (owner.status === 'active') {
+      return { valid: false, message: 'Password has already been set. Please login.' };
+    }
+
+    return { 
+      valid: true, 
+      email: owner.email, 
+      fullName: owner.full_name,
+      ownerId: owner.id 
+    };
+  } catch (err) {
+    console.error('Exception validating token:', err);
+    return { valid: false, message: 'Error validating token' };
+  }
+}
+
+/**
+ * Set password for an owner using a valid token
+ * Creates a Supabase auth user and updates the owner record
+ */
+export async function setOwnerPassword(token, password) {
+  if (!supabase) {
+    // Demo mode for development
+    const isDevelopment = typeof import.meta !== 'undefined' && import.meta.env?.DEV;
+    if (isDevelopment && token === 'demo-token') {
+      return { success: true };
+    }
+    return { success: false, message: 'Service not configured' };
+  }
+
+  if (!token || !password) {
+    return { success: false, message: 'Token and password are required' };
+  }
+
+  if (password.length < 8) {
+    return { success: false, message: 'Password must be at least 8 characters' };
+  }
+
+  try {
+    // First validate the token and get owner info
+    const validation = await validateSetPasswordToken(token);
+    if (!validation.valid) {
+      return { success: false, message: validation.message };
+    }
+
+    const { email, ownerId } = validation;
+
+    // Create Supabase auth user with the provided password
+    const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (signUpError) {
+      // If user already exists, try to update the password
+      if (signUpError.message.includes('already registered')) {
+        // Note: Updating existing user's password requires admin privileges
+        // For this flow, we'll inform the user to use the password reset flow
+        return { 
+          success: false, 
+          message: 'An account with this email already exists. Please use the login page.' 
+        };
+      }
+      console.error('Error creating auth user:', signUpError);
+      return { success: false, message: signUpError.message };
+    }
+
+    // Update the owner record: set status to 'active', link user_id, clear token
+    const { error: updateError } = await supabase
+      .from('property_owners')
+      .update({
+        status: 'active',
+        user_id: authData.user?.id || null,
+        set_password_token: null,
+        set_password_token_expires_at: null
+      })
+      .eq('id', ownerId);
+
+    if (updateError) {
+      console.error('Error updating owner record:', updateError);
+      // Auth user was created, but owner record update failed
+      // The user can still login, just need to update status manually
+      return { 
+        success: true, 
+        warning: 'Account created but status update failed. Please contact support.' 
+      };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error('Exception setting password:', err);
     return { success: false, message: ERROR_MESSAGE };
   }
 }

@@ -33,6 +33,7 @@ import AdminOwnerProperties from './components/admin/AdminOwnerProperties';
 // Owner Pages
 import OwnerSignup from './pages/OwnerSignup';
 import OwnerLogin from './pages/OwnerLogin';
+import OwnerSetPassword from './pages/OwnerSetPassword';
 import OwnerDashboard from './pages/OwnerDashboard';
 import ProtectedOwnerRoute from './components/common/ProtectedOwnerRoute';
 
@@ -75,6 +76,7 @@ function App() {
           {/* Owner Routes */}
           <Route path="/owner/signup" element={<OwnerSignup />} />
           <Route path="/owner/login" element={<OwnerLogin />} />
+          <Route path="/owner/set-password" element={<OwnerSetPassword />} />
           <Route
             path="/owner/dashboard"
             element={
