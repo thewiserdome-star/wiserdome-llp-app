@@ -13,6 +13,52 @@ export function AuthProvider({ children }) {
   const [owner, setOwner] = useState(null);
   const [loading, setLoading] = useState(isSupabaseConfigured() && supabase);
 
+  // Clear Supabase tokens from localStorage
+  const clearLocalSupabaseTokens = useCallback(() => {
+    try { localStorage.removeItem('supabase.auth.token'); } catch { /* ignore */ }
+    try { localStorage.removeItem('sb-access-token'); } catch { /* ignore */ }
+    try { localStorage.removeItem('sb-refresh-token'); } catch { /* ignore */ }
+  }, []);
+
+  // Redirect to the appropriate login page based on current path
+  const redirectToLogin = useCallback(() => {
+    try {
+      if (window.location.pathname?.includes('/admin')) {
+        window.location.replace('/admin/login');
+      } else if (window.location.pathname?.includes('/owner')) {
+        window.location.replace('/owner/login');
+      } else {
+        window.location.replace('/admin/login');
+      }
+    } catch {
+      // Fallback - try hard navigation
+      window.location.href = '/admin/login';
+    }
+  }, []);
+
+  // Check if an error indicates an invalid refresh token
+  const isRefreshTokenError = useCallback((err) => {
+    const msg = err?.message || (typeof err === 'string' ? err : '');
+    return msg.includes('Refresh Token Not Found') || msg.includes('Invalid Refresh Token');
+  }, []);
+
+  // Handle invalid refresh token by signing out and redirecting
+  const handleInvalidRefresh = useCallback(async (err) => {
+    console.warn('[Auth] Invalid refresh token detected:', err?.message || err);
+    try {
+      if (supabase && supabase.auth && supabase.auth.signOut) {
+        await supabase.auth.signOut();
+      }
+    } catch (signOutErr) {
+      console.warn('[Auth] Error while signing out:', signOutErr);
+    }
+
+    clearLocalSupabaseTokens();
+    setUser(null);
+    setOwner(null);
+    redirectToLogin();
+  }, [clearLocalSupabaseTokens, redirectToLogin]);
+
   // Check if user is an approved owner
   const checkOwnerStatus = useCallback(async (email) => {
     const ownerData = await getOwnerByEmail(email);
@@ -24,31 +70,110 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!isSupabaseConfigured() || !supabase) {
-      return;
+    let subscription = null;
+    let unhandledRejectionHandler = null;
+
+    async function init() {
+      if (!isSupabaseConfigured() || !supabase) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Get initial session
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error) {
+          if (isRefreshTokenError(error)) {
+            await handleInvalidRefresh(error);
+            return;
+          }
+          console.error('[Auth] Error fetching session:', error);
+        }
+
+        const session = data?.session;
+        setUser(session?.user ?? null);
+
+        if (session?.user?.email) {
+          await checkOwnerStatus(session.user.email);
+        }
+      } catch (err) {
+        if (isRefreshTokenError(err)) {
+          await handleInvalidRefresh(err);
+          return;
+        }
+        console.error('[Auth] Unexpected error getting session:', err);
+      } finally {
+        setLoading(false);
+      }
+
+      // Listen for auth changes
+      try {
+        const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.debug('[Auth] onAuthStateChange event:', event);
+
+          // Check for token refresh error events
+          if (event === 'TOKEN_REFRESH_FAILED' || event === 'SIGNED_OUT') {
+            if (event === 'SIGNED_OUT') {
+              setUser(null);
+              setOwner(null);
+              return;
+            }
+            await handleInvalidRefresh(new Error(`Auth event indicates token failure: ${event}`));
+            return;
+          }
+
+          setUser(session?.user ?? null);
+          if (session?.user?.email) {
+            await checkOwnerStatus(session.user.email);
+          } else {
+            setOwner(null);
+          }
+        });
+
+        subscription = sub;
+      } catch (subErr) {
+        console.error('[Auth] Error setting up auth subscription:', subErr);
+      }
+
+      // Safety net: catch unhandled promise rejections related to refresh tokens
+      unhandledRejectionHandler = (event) => {
+        try {
+          const reason = event?.reason;
+          const msg = reason?.message || (typeof reason === 'string' ? reason : '');
+          if (msg && isRefreshTokenError({ message: msg })) {
+            event.preventDefault?.();
+            handleInvalidRefresh(reason);
+          }
+        } catch {
+          // Ignore errors in the handler itself
+        }
+      };
+      window.addEventListener('unhandledrejection', unhandledRejectionHandler);
     }
 
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user?.email) {
-        await checkOwnerStatus(session.user.email);
-      }
-      setLoading(false);
-    });
+    init();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user?.email) {
-        await checkOwnerStatus(session.user.email);
-      } else {
-        setOwner(null);
+    return () => {
+      try {
+        if (subscription && subscription.unsubscribe) {
+          subscription.unsubscribe();
+        } else if (subscription && typeof subscription === 'object' && subscription?.data?.subscription?.unsubscribe) {
+          subscription.data.subscription.unsubscribe();
+        }
+      } catch {
+        // Ignore cleanup errors
       }
-    });
 
-    return () => subscription.unsubscribe();
-  }, [checkOwnerStatus]);
+      try {
+        if (unhandledRejectionHandler) {
+          window.removeEventListener('unhandledrejection', unhandledRejectionHandler);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
+    };
+  }, [checkOwnerStatus, handleInvalidRefresh, isRefreshTokenError]);
 
   // Admin sign in
   const signIn = useCallback(async (email, password) => {
@@ -127,10 +252,20 @@ export function AuthProvider({ children }) {
       return { error: null };
     }
 
-    const { error } = await supabase.auth.signOut();
-    setOwner(null);
-    return { error };
-  }, []);
+    try {
+      const { error } = await supabase.auth.signOut();
+      setUser(null);
+      setOwner(null);
+      clearLocalSupabaseTokens();
+      return { error };
+    } catch (err) {
+      console.warn('[Auth] signOut error:', err);
+      clearLocalSupabaseTokens();
+      setUser(null);
+      setOwner(null);
+      return { error: err };
+    }
+  }, [clearLocalSupabaseTokens]);
 
   const ownerSignOut = useCallback(async () => {
     setOwner(null);
