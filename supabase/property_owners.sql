@@ -4,7 +4,8 @@
 -- 1. property_owners - Stores property owner signup requests and approved owners
 -- 2. owner_properties - Stores properties managed by Wiserdome for owners
 --
--- Run this in your Supabase SQL Editor after running the main schema.sql
+-- IMPORTANT: Run this in your Supabase SQL Editor AFTER running the main schema.sql
+-- This script depends on the update_updated_at_column() function defined in schema.sql
 
 -- ============================================
 -- Property Owners Table

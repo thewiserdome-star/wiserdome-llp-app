@@ -95,7 +95,7 @@ export function AuthProvider({ children }) {
     const ownerData = await getOwnerByEmail(email);
     
     if (!ownerData) {
-      return { error: { message: 'No account found with this email. Please sign up first.' } };
+      return { error: { message: 'Invalid credentials or account not found. Please sign up or try again.' } };
     }
     
     if (ownerData.status === 'pending') {
