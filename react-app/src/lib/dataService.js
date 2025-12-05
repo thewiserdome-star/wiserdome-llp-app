@@ -767,18 +767,27 @@ export async function getOwnerByEmail(email) {
     return null;
   }
 
+  if (!email) {
+    return null;
+  }
+
   try {
+    // Trim email and use exact match
+    // Use maybeSingle() instead of single() to avoid PGRST116 error when no row found
+    const trimmedEmail = email.trim();
+    
     const { data: owner, error } = await supabase
       .from('property_owners')
       .select('*')
-      .eq('email', email)
-      .single();
+      .eq('email', trimmedEmail)
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching owner by email:', error);
       return null;
     }
 
+    // maybeSingle() returns null when no row is found (not an error)
     return owner;
   } catch (err) {
     console.error('Exception fetching owner by email:', err);

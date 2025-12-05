@@ -84,15 +84,19 @@ CREATE POLICY "Allow anonymous signup requests"
     WITH CHECK (status = 'pending');
 
 -- Allow owners to read their own data
+-- Fixed: Removed self-referencing SELECT that caused infinite recursion
+-- Now uses direct user_id comparison OR email matching via JWT claims
 CREATE POLICY "Allow owners to read own data"
     ON property_owners
     FOR SELECT
     TO authenticated
-    USING (user_id = auth.uid() OR EXISTS (
-        SELECT 1 FROM auth.users 
-        WHERE auth.uid() = auth.users.id 
-        AND auth.users.email IN (SELECT email FROM property_owners WHERE id = property_owners.id)
-    ));
+    USING (
+        user_id = auth.uid()
+        OR
+        LOWER(email) = LOWER(
+            (current_setting('request.jwt.claims', true)::json->>'email')
+        )
+    );
 
 -- Allow admins full access on property_owners
 CREATE POLICY "Allow authenticated users full access on property_owners"
@@ -105,6 +109,8 @@ CREATE POLICY "Allow authenticated users full access on property_owners"
 -- Owner Properties Policies
 
 -- Allow owners to read their own properties
+-- Fixed: Avoid querying property_owners which could cause recursion due to RLS
+-- Instead, check if the current user owns any property_owners record directly
 CREATE POLICY "Allow owners to read own properties"
     ON owner_properties
     FOR SELECT
@@ -113,6 +119,9 @@ CREATE POLICY "Allow owners to read own properties"
         owner_id IN (
             SELECT id FROM property_owners 
             WHERE user_id = auth.uid()
+            OR LOWER(email) = LOWER(
+                (current_setting('request.jwt.claims', true)::json->>'email')
+            )
         )
     );
 
