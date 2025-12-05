@@ -27,6 +27,14 @@ import AdminFAQs from './components/admin/AdminFAQs';
 import AdminTestimonials from './components/admin/AdminTestimonials';
 import AdminInquiries from './components/admin/AdminInquiries';
 import AdminDeveloperWebsites from './components/admin/AdminDeveloperWebsites';
+import AdminPropertyOwners from './components/admin/AdminPropertyOwners';
+import AdminOwnerProperties from './components/admin/AdminOwnerProperties';
+
+// Owner Pages
+import OwnerSignup from './pages/OwnerSignup';
+import OwnerLogin from './pages/OwnerLogin';
+import OwnerDashboard from './pages/OwnerDashboard';
+import ProtectedOwnerRoute from './components/common/ProtectedOwnerRoute';
 
 // Styles
 import './index.css';
@@ -64,6 +72,18 @@ function App() {
             <Route path="/developer-websites" element={<DeveloperWebsites />} />
           </Route>
 
+          {/* Owner Routes */}
+          <Route path="/owner/signup" element={<OwnerSignup />} />
+          <Route path="/owner/login" element={<OwnerLogin />} />
+          <Route
+            path="/owner/dashboard"
+            element={
+              <ProtectedOwnerRoute>
+                <OwnerDashboard />
+              </ProtectedOwnerRoute>
+            }
+          />
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
@@ -81,6 +101,8 @@ function App() {
             <Route path="testimonials" element={<AdminTestimonials />} />
             <Route path="inquiries" element={<AdminInquiries />} />
             <Route path="developer-websites" element={<AdminDeveloperWebsites />} />
+            <Route path="property-owners" element={<AdminPropertyOwners />} />
+            <Route path="owner-properties" element={<AdminOwnerProperties />} />
           </Route>
         </Routes>
       </BrowserRouter>

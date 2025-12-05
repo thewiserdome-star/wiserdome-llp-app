@@ -16,6 +16,8 @@ export default function AdminDashboard() {
 
   const menuItems = [
     { path: '/admin', label: 'Dashboard', icon: '📊' },
+    { path: '/admin/property-owners', label: 'Property Owners', icon: '👥' },
+    { path: '/admin/owner-properties', label: 'Owner Properties', icon: '🏘️' },
     { path: '/admin/pricing', label: 'Pricing Plans', icon: '💰' },
     { path: '/admin/services', label: 'Services', icon: '🛠️' },
     { path: '/admin/developer-websites', label: 'Developer Websites', icon: '🌐' },
