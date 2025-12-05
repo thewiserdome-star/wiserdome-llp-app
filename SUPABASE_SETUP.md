@@ -157,12 +157,12 @@ policy USING clause.
 
 #### Troubleshooting: Admin Cannot See Property Owners
 
-If you login through `/admin` and cannot see property_owners records, run the migration:
+If you login through `/admin` and cannot see property_owners records, apply the migration by:
 
-```sql
--- Run this in Supabase SQL Editor
--- File: db/migrations/001_fix_property_owners_rls.sql
-```
+1. Open your Supabase project dashboard
+2. Go to **SQL Editor**
+3. Copy the contents of `db/migrations/001_fix_property_owners_rls.sql` from this repository
+4. Paste into the SQL Editor and click **Run**
 
 This migration ensures the "Allow authenticated users full access on property_owners" policy exists,
 which is required for admin users to see all records.
