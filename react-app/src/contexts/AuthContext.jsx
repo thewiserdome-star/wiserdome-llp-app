@@ -112,14 +112,13 @@ export function AuthProvider({ children }) {
         const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
           console.debug('[Auth] onAuthStateChange event:', event);
 
-          if (event === 'SIGNED_OUT') {
-            setUser(null);
-            setOwner(null);
-            return;
-          }
-
-          // Check for token-related events without a session
-          if (!session && event && (event.toLowerCase().includes('token') || event.toLowerCase().includes('refresh'))) {
+          // Check for token refresh error events
+          if (event === 'TOKEN_REFRESH_FAILED' || event === 'SIGNED_OUT') {
+            if (event === 'SIGNED_OUT') {
+              setUser(null);
+              setOwner(null);
+              return;
+            }
             await handleInvalidRefresh(new Error(`Auth event indicates token failure: ${event}`));
             return;
           }
@@ -255,6 +254,7 @@ export function AuthProvider({ children }) {
 
     try {
       const { error } = await supabase.auth.signOut();
+      setUser(null);
       setOwner(null);
       clearLocalSupabaseTokens();
       return { error };
