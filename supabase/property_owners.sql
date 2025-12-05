@@ -20,13 +20,18 @@ CREATE TABLE IF NOT EXISTS property_owners (
     address TEXT,
     city VARCHAR(100),
     country VARCHAR(100) DEFAULT 'India',
-    status VARCHAR(50) DEFAULT 'pending', -- pending, approved, rejected
+    status VARCHAR(50) DEFAULT 'pending', -- pending, approved, rejected, active
     rejection_reason TEXT,
     approved_by UUID REFERENCES auth.users(id),
     approved_at TIMESTAMP WITH TIME ZONE,
+    set_password_token VARCHAR(255),
+    set_password_token_expires_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Create index for token lookup
+CREATE INDEX IF NOT EXISTS idx_property_owners_set_password_token ON property_owners(set_password_token);
 
 -- Create indexes for faster queries
 CREATE INDEX IF NOT EXISTS idx_property_owners_email ON property_owners(email);
