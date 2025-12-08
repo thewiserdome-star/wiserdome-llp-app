@@ -1,18 +1,19 @@
-import React, { useState, useMemo } from 'react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calculator, TrendingUp, DollarSign, PiggyBank, Home } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, Area, AreaChart } from 'recharts';
+import { Calculator, TrendingUp, DollarSign, PiggyBank, Home, IndianRupee, Percent, Calendar } from 'lucide-react';
+import useROIStore from '../stores/roiStore';
 
-// Helper function for input validation
-const parsePositiveNumber = (value) => Math.max(0, parseFloat(value) || 0);
-
-// Reusable SliderInput Component
-const SliderInput = ({ label, value, onChange, min = 0, max = 100, step = 1, suffix = '%' }) => {
+// Reusable SliderInput Component with React Hook Form integration
+const SliderInput = ({ label, register, name, min = 0, max = 100, step = 1, suffix = '%', watch }) => {
+  const value = watch(name);
+  
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-2">
         <label className="text-sm font-medium text-gray-700">{label}</label>
-        <span className="text-sm font-semibold text-primary">
-          {value.toLocaleString('en-IN')}{suffix}
+        <span className="text-sm font-semibold text-emerald-600">
+          {Number(value || 0).toLocaleString('en-IN')}{suffix}
         </span>
       </div>
       <input
@@ -20,9 +21,8 @@ const SliderInput = ({ label, value, onChange, min = 0, max = 100, step = 1, suf
         min={min}
         max={max}
         step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
+        {...register(name, { valueAsNumber: true })}
+        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
       <div className="flex justify-between text-xs text-gray-500 mt-1">
         <span>{min.toLocaleString('en-IN')}{suffix}</span>
@@ -32,21 +32,22 @@ const SliderInput = ({ label, value, onChange, min = 0, max = 100, step = 1, suf
   );
 };
 
-// ResultCard Component for Key Metrics
+// ResultCard Component for Key Metrics - Updated with FinTech aesthetic
 const ResultCard = ({ title, value, subtitle, icon: Icon, trend = 'neutral' }) => {
-  const trendColor = trend === 'positive' ? 'text-green-600' : trend === 'negative' ? 'text-red-600' : 'text-gray-600';
+  const trendColor = trend === 'positive' ? 'text-emerald-600' : trend === 'negative' ? 'text-rose-600' : 'text-gray-600';
+  const bgColor = trend === 'positive' ? 'from-emerald-50 to-emerald-100 border-emerald-200' : trend === 'negative' ? 'from-rose-50 to-rose-100 border-rose-200' : 'from-gray-50 to-gray-100 border-gray-200';
   
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+    <div className={`bg-gradient-to-br ${bgColor} rounded-xl shadow-md p-6 border hover:shadow-lg transition-all duration-300`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
+          <p className="text-sm font-medium text-gray-700 mb-1">{title}</p>
           <p className={`text-3xl font-bold ${trendColor} mb-2`}>{value}</p>
-          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-gray-600">{subtitle}</p>}
         </div>
         {Icon && (
-          <div className="bg-primary/10 p-3 rounded-lg">
-            <Icon className="w-6 h-6 text-primary" />
+          <div className={`${trend === 'positive' ? 'bg-emerald-100' : trend === 'negative' ? 'bg-rose-100' : 'bg-gray-100'} p-3 rounded-lg`}>
+            <Icon className={`w-6 h-6 ${trendColor}`} />
           </div>
         )}
       </div>
@@ -56,114 +57,37 @@ const ResultCard = ({ title, value, subtitle, icon: Icon, trend = 'neutral' }) =
 
 // Main ROI Calculator Component
 export default function ROICalculator() {
-  // State for inputs
-  const [purchasePrice, setPurchasePrice] = useState(5000000);
-  const [monthlyRent, setMonthlyRent] = useState(25000);
-  const [appreciationRate, setAppreciationRate] = useState(5);
-  const [hasLoan, setHasLoan] = useState(true);
-  const [downPayment, setDownPayment] = useState(20);
-  const [interestRate, setInterestRate] = useState(8.5);
-  const [loanTenure, setLoanTenure] = useState(20);
-  const [annualMaintenance, setAnnualMaintenance] = useState(60000);
-  const [propertyTax, setPropertyTax] = useState(15000);
-  const [managementFee, setManagementFee] = useState(8);
-  const [vacancyRate, setVacancyRate] = useState(5);
-
-  // Calculations
-  const calculations = useMemo(() => {
-    try {
-      // Basic calculations
-      const downPaymentAmount = hasLoan ? (purchasePrice * downPayment) / 100 : purchasePrice;
-      const loanAmount = hasLoan ? purchasePrice - downPaymentAmount : 0;
-      const annualRent = monthlyRent * 12;
-      
-      // EMI Calculation (if loan exists)
-      let monthlyEMI = 0;
-      if (hasLoan && loanAmount > 0) {
-        const monthlyInterestRate = interestRate / 100 / 12;
-        const numberOfPayments = loanTenure * 12;
-        if (monthlyInterestRate > 0) {
-          const compound = Math.pow(1 + monthlyInterestRate, numberOfPayments);
-          monthlyEMI = (loanAmount * monthlyInterestRate * compound) / (compound - 1);
-        }
-      }
-      const annualEMI = monthlyEMI * 12;
-      
-      // Operating Expenses
-      const annualManagementFee = (annualRent * managementFee) / 100;
-      const vacancyLoss = (annualRent * vacancyRate) / 100;
-      const totalAnnualExpenses = annualMaintenance + propertyTax + annualManagementFee + vacancyLoss;
-      
-      // Net Operating Income
-      const netOperatingIncome = annualRent - totalAnnualExpenses;
-      
-      // Monthly Cash Flow
-      const monthlyCashFlow = (netOperatingIncome / 12) - monthlyEMI;
-      
-      // Net Rental Yield
-      const totalInvestment = hasLoan ? downPaymentAmount : purchasePrice;
-      const netRentalYield = totalInvestment > 0 ? ((netOperatingIncome - annualEMI) / totalInvestment) * 100 : 0;
-      
-      // Cash-on-Cash Return
-      const annualCashFlow = netOperatingIncome - annualEMI;
-      const cashOnCashReturn = totalInvestment > 0 ? (annualCashFlow / totalInvestment) * 100 : 0;
-      
-      // 5-Year Projection
-      const appreciationGain = purchasePrice * Math.pow(1 + appreciationRate / 100, 5) - purchasePrice;
-      const accumulatedCashFlow = annualCashFlow * 5;
-      const totalROI5Year = totalInvestment > 0 ? ((accumulatedCashFlow + appreciationGain) / totalInvestment) * 100 : 0;
-      
-      // 10-Year Projection Data for Chart
-      const projectionData = [];
-      for (let year = 0; year <= 10; year++) {
-        const propertyValue = purchasePrice * Math.pow(1 + appreciationRate / 100, year);
-        const cumulativeCashFlow = annualCashFlow * year;
-        projectionData.push({
-          year: year === 0 ? 'Now' : `Year ${year}`,
-          'Property Value': Math.round(propertyValue),
-          'Total Investment': Math.round(totalInvestment),
-          'Accumulated Cash Flow': Math.round(cumulativeCashFlow > 0 ? cumulativeCashFlow : 0),
-        });
-      }
-      
-      // Expense Breakdown for Pie Chart
-      const expenseBreakdown = [
-        { name: 'EMI', value: Math.round(annualEMI), color: '#3730A3' },
-        { name: 'Maintenance', value: Math.round(annualMaintenance), color: '#F59E0B' },
-        { name: 'Property Tax', value: Math.round(propertyTax), color: '#14B8A6' },
-        { name: 'Management Fee', value: Math.round(annualManagementFee), color: '#8B5CF6' },
-        { name: 'Vacancy Loss', value: Math.round(vacancyLoss), color: '#EF4444' },
-      ].filter(item => item.value > 0);
-      
-      return {
-        netRentalYield,
-        cashOnCashReturn,
-        totalROI5Year,
-        monthlyCashFlow,
-        annualCashFlow,
-        projectionData,
-        expenseBreakdown,
-        totalAnnualExpenses,
-        annualEMI,
-        netOperatingIncome,
-      };
-    } catch (error) {
-      console.error('Calculation error:', error);
-      return {
-        netRentalYield: 0,
-        cashOnCashReturn: 0,
-        totalROI5Year: 0,
-        monthlyCashFlow: 0,
-        annualCashFlow: 0,
-        projectionData: [],
-        expenseBreakdown: [],
-        totalAnnualExpenses: 0,
-        annualEMI: 0,
-        netOperatingIncome: 0,
-      };
+  // Zustand store
+  const { results, calculateROI } = useROIStore();
+  
+  // React Hook Form setup with default values
+  const { register, control, watch } = useForm({
+    defaultValues: {
+      purchasePrice: 5000000,
+      monthlyRent: 25000,
+      annualAppreciation: 5,
+      propertyManagementFee: 8,
+      monthlyMaintenance: 5000,
+      hasLoan: true,
+      downPaymentPercent: 20,
+      interestRate: 8.5,
+      loanTenure: 20,
+    },
+    mode: 'onChange',
+  });
+  
+  // Watch all form values for real-time updates
+  const formData = useWatch({ control });
+  
+  // Trigger calculation whenever form data changes
+  useEffect(() => {
+    if (formData) {
+      calculateROI(formData);
     }
-  }, [purchasePrice, monthlyRent, appreciationRate, hasLoan, downPayment, interestRate, loanTenure, 
-      annualMaintenance, propertyTax, managementFee, vacancyRate]);
+  }, [formData, calculateROI]);
+  
+  // Watch specific field for conditional rendering
+  const hasLoan = watch('hasLoan');
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -174,271 +98,332 @@ export default function ROICalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Calculator className="w-12 h-12 text-primary mr-3" />
-            <h1 className="text-4xl font-bold text-gray-800">Rental Property ROI Calculator</h1>
+            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-3 rounded-xl shadow-lg">
+              <Calculator className="w-10 h-10 text-white" />
+            </div>
           </div>
-          <p className="text-gray-600 text-lg">Calculate returns on your Indian real estate investment</p>
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-3">
+            NRI Property ROI Calculator
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Calculate comprehensive returns on your Indian real estate investment with professional-grade analytics
+          </p>
         </div>
 
-        {/* Main Content - Split Screen Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Side - Inputs */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-              <Home className="w-6 h-6 mr-2 text-primary" />
-              Property Details
-            </h2>
+        {/* Main Content - Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* Left Side - Inputs (2 columns) */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Property Details Card */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                <Home className="w-5 h-5 mr-2 text-emerald-600" />
+                Property Details
+              </h2>
 
-            {/* Purchase Price */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Purchase Price</label>
-              <input
-                type="number"
-                value={purchasePrice}
-                onChange={(e) => setPurchasePrice(parsePositiveNumber(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="Enter purchase price"
-              />
-            </div>
-
-            {/* Monthly Rent */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Expected Monthly Rent</label>
-              <input
-                type="number"
-                value={monthlyRent}
-                onChange={(e) => setMonthlyRent(parsePositiveNumber(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="Enter monthly rent"
-              />
-            </div>
-
-            {/* Appreciation Rate */}
-            <SliderInput
-              label="Annual Appreciation Rate"
-              value={appreciationRate}
-              onChange={setAppreciationRate}
-              min={0}
-              max={15}
-              step={0.5}
-              suffix="%"
-            />
-
-            {/* Loan Toggle */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={hasLoan}
-                  onChange={(e) => setHasLoan(e.target.checked)}
-                  className="w-5 h-5 text-primary focus:ring-primary border-gray-300 rounded"
-                />
-                <span className="ml-3 text-sm font-medium text-gray-700">Taking a loan?</span>
-              </label>
-            </div>
-
-            {/* Loan Details - Conditional */}
-            {hasLoan && (
-              <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Loan Details</h3>
-                
-                <SliderInput
-                  label="Down Payment"
-                  value={downPayment}
-                  onChange={setDownPayment}
-                  min={10}
-                  max={80}
-                  step={5}
-                  suffix="%"
-                />
-                
-                <SliderInput
-                  label="Interest Rate"
-                  value={interestRate}
-                  onChange={setInterestRate}
-                  min={6}
-                  max={12}
-                  step={0.25}
-                  suffix="%"
-                />
-                
-                <SliderInput
-                  label="Loan Tenure"
-                  value={loanTenure}
-                  onChange={setLoanTenure}
-                  min={5}
-                  max={30}
-                  step={1}
-                  suffix=" years"
-                />
-              </div>
-            )}
-
-            {/* Operating Expenses */}
-            <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Operating Expenses</h3>
-              
-              {/* Annual Maintenance */}
-              <div className="mb-4">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Annual Maintenance/Society Charges</label>
+              {/* Purchase Price */}
+              <div className="mb-6">
+                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <IndianRupee className="w-4 h-4 mr-1" />
+                  Purchase Price
+                </label>
                 <input
                   type="number"
-                  value={annualMaintenance}
-                  onChange={(e) => setAnnualMaintenance(parsePositiveNumber(e.target.value))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  {...register('purchasePrice', { valueAsNumber: true })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="Enter purchase price"
                 />
               </div>
 
-              {/* Property Tax */}
-              <div className="mb-4">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Annual Property Tax</label>
+              {/* Monthly Rent */}
+              <div className="mb-6">
+                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <IndianRupee className="w-4 h-4 mr-1" />
+                  Expected Monthly Rent
+                </label>
                 <input
                   type="number"
-                  value={propertyTax}
-                  onChange={(e) => setPropertyTax(parsePositiveNumber(e.target.value))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  {...register('monthlyRent', { valueAsNumber: true })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="Enter monthly rent"
                 />
               </div>
 
+              {/* Monthly Maintenance */}
+              <div className="mb-6">
+                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <IndianRupee className="w-4 h-4 mr-1" />
+                  Society Maintenance (Monthly)
+                </label>
+                <input
+                  type="number"
+                  {...register('monthlyMaintenance', { valueAsNumber: true })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="Enter monthly maintenance"
+                />
+              </div>
+
+              {/* Appreciation Rate Slider */}
               <SliderInput
-                label="Property Management Fee"
-                value={managementFee}
-                onChange={setManagementFee}
+                label="Annual Appreciation"
+                register={register}
+                name="annualAppreciation"
                 min={0}
                 max={15}
                 step={0.5}
                 suffix="%"
+                watch={watch}
               />
-              
+
+              {/* Property Management Fee Slider */}
               <SliderInput
-                label="Vacancy Rate"
-                value={vacancyRate}
-                onChange={setVacancyRate}
+                label="Property Management Fee"
+                register={register}
+                name="propertyManagementFee"
                 min={0}
-                max={20}
-                step={1}
+                max={15}
+                step={0.5}
                 suffix="%"
+                watch={watch}
               />
+            </div>
+
+            {/* Loan Details Card */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <div className="mb-6">
+                <label className="flex items-center cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    {...register('hasLoan')}
+                    className="w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded transition-all"
+                  />
+                  <span className="ml-3 text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">
+                    Taking a loan for this property?
+                  </span>
+                </label>
+              </div>
+
+              {/* Loan Details - Conditional */}
+              {hasLoan && (
+                <div className="space-y-4 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <Calculator className="w-4 h-4 mr-2 text-emerald-600" />
+                    Loan Details
+                  </h3>
+                  
+                  <SliderInput
+                    label="Down Payment"
+                    register={register}
+                    name="downPaymentPercent"
+                    min={10}
+                    max={80}
+                    step={5}
+                    suffix="%"
+                    watch={watch}
+                  />
+                  
+                  <SliderInput
+                    label="Interest Rate"
+                    register={register}
+                    name="interestRate"
+                    min={6}
+                    max={12}
+                    step={0.25}
+                    suffix="% p.a."
+                    watch={watch}
+                  />
+                  
+                  <SliderInput
+                    label="Loan Tenure"
+                    register={register}
+                    name="loanTenure"
+                    min={5}
+                    max={30}
+                    step={1}
+                    suffix=" years"
+                    watch={watch}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Right Side - Results */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-8">
+          {/* Right Side - Results (3 columns) - Sticky on desktop */}
+          <div className="lg:col-span-3 space-y-6 lg:sticky lg:top-8 lg:self-start">
+            {/* Key Metrics Dashboard */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <TrendingUp className="w-6 h-6 mr-2 text-primary" />
-                Key Metrics
+                <TrendingUp className="w-6 h-6 mr-2 text-emerald-600" />
+                Key Performance Metrics
               </h2>
 
-              {/* Key Metrics Cards */}
-              <div className="grid grid-cols-1 gap-4 mb-6">
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <ResultCard
                   title="Net Rental Yield"
-                  value={`${calculations.netRentalYield.toFixed(2)}%`}
+                  value={`${results.netYield.toFixed(2)}%`}
                   subtitle="Annual return on investment"
-                  icon={DollarSign}
-                  trend={calculations.netRentalYield > 5 ? 'positive' : calculations.netRentalYield > 0 ? 'neutral' : 'negative'}
+                  icon={Percent}
+                  trend={results.netYield > 5 ? 'positive' : results.netYield > 0 ? 'neutral' : 'negative'}
                 />
                 
                 <ResultCard
                   title="Cash-on-Cash Return"
-                  value={`${calculations.cashOnCashReturn.toFixed(2)}%`}
-                  subtitle="Return relative to cash invested"
+                  value={`${results.cashOnCashReturn.toFixed(2)}%`}
+                  subtitle="Return on actual cash invested"
                   icon={PiggyBank}
-                  trend={calculations.cashOnCashReturn > 8 ? 'positive' : calculations.cashOnCashReturn > 0 ? 'neutral' : 'negative'}
+                  trend={results.cashOnCashReturn > 8 ? 'positive' : results.cashOnCashReturn > 0 ? 'neutral' : 'negative'}
                 />
                 
                 <ResultCard
-                  title="5-Year Total ROI"
-                  value={`${calculations.totalROI5Year.toFixed(2)}%`}
-                  subtitle="Projected return over 5 years"
+                  title="Cap Rate"
+                  value={`${results.capRate.toFixed(2)}%`}
+                  subtitle="Property's intrinsic return"
                   icon={TrendingUp}
-                  trend={calculations.totalROI5Year > 50 ? 'positive' : calculations.totalROI5Year > 0 ? 'neutral' : 'negative'}
+                  trend={results.capRate > 4 ? 'positive' : results.capRate > 0 ? 'neutral' : 'negative'}
                 />
                 
                 <ResultCard
                   title="Monthly Cash Flow"
-                  value={formatCurrency(calculations.monthlyCashFlow)}
-                  subtitle={calculations.monthlyCashFlow > 0 ? 'Positive cash flow' : 'Negative cash flow'}
-                  icon={Calculator}
-                  trend={calculations.monthlyCashFlow > 0 ? 'positive' : 'negative'}
+                  value={formatCurrency(results.monthlyCashFlow)}
+                  subtitle={results.monthlyCashFlow > 0 ? 'Positive cash flow' : 'Negative cash flow'}
+                  icon={DollarSign}
+                  trend={results.monthlyCashFlow > 0 ? 'positive' : 'negative'}
                 />
+              </div>
+
+              {/* 5-Year Projection Card */}
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-xl shadow-lg p-6 mt-6">
+                <div className="flex items-center mb-4">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  <h3 className="text-xl font-bold">5-Year Wealth Projection</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-emerald-100 text-sm mb-1">Total Equity Gained</p>
+                    <p className="text-2xl font-bold">{formatCurrency(results.fiveYearProjection.totalEquity)}</p>
+                  </div>
+                  <div>
+                    <p className="text-emerald-100 text-sm mb-1">Total Cash Flow</p>
+                    <p className="text-2xl font-bold">{formatCurrency(results.fiveYearProjection.totalCashFlow)}</p>
+                  </div>
+                  <div>
+                    <p className="text-emerald-100 text-sm mb-1">Total Wealth Created</p>
+                    <p className="text-3xl font-bold">{formatCurrency(results.fiveYearProjection.totalWealth)}</p>
+                  </div>
+                  <div>
+                    <p className="text-emerald-100 text-sm mb-1">Total ROI</p>
+                    <p className="text-3xl font-bold">{results.fiveYearProjection.totalROI.toFixed(1)}%</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Expense Breakdown Pie Chart */}
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Annual Expense Breakdown</h3>
-              {calculations.expenseBreakdown.length > 0 ? (
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 gap-6">
+              {/* 10-Year Projection Chart */}
+              <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">10-Year Property Value & Equity Projection</h3>
                 <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={calculations.expenseBreakdown}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {calculations.expenseBreakdown.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
+                  <AreaChart data={results.projectionData}>
+                    <defs>
+                      <linearGradient id="colorProperty" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="colorEquity" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="year" stroke="#6b7280" />
+                    <YAxis tickFormatter={(value) => `₹${(value / 100000).toFixed(1)}L`} stroke="#6b7280" />
                     <Tooltip formatter={(value) => formatCurrency(value)} />
-                  </PieChart>
+                    <Legend />
+                    <Area type="monotone" dataKey="Property Value" stroke="#10b981" fillOpacity={1} fill="url(#colorProperty)" />
+                    <Area type="monotone" dataKey="Equity" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorEquity)" />
+                    <Line type="monotone" dataKey="Loan Balance" stroke="#ef4444" strokeWidth={2} />
+                  </AreaChart>
                 </ResponsiveContainer>
-              ) : (
-                <p className="text-gray-500 text-center py-12">No expenses to display</p>
-              )}
+              </div>
+
+              {/* Expense Breakdown */}
+              <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Annual Expense Breakdown</h3>
+                {results.expenseBreakdown.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={results.expenseBreakdown}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {results.expenseBreakdown.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => formatCurrency(value)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-gray-500 text-center py-12">No expenses to display</p>
+                )}
+              </div>
             </div>
 
-            {/* Projected Value vs Investment Bar Chart */}
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">10-Year Property Value Projection</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={calculations.projectionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
-                  <YAxis tickFormatter={(value) => `₹${(value / 100000).toFixed(1)}L`} />
-                  <Tooltip formatter={(value) => formatCurrency(value)} />
-                  <Legend />
-                  <Bar dataKey="Property Value" fill="#3730A3" />
-                  <Bar dataKey="Total Investment" fill="#F59E0B" />
-                  <Bar dataKey="Accumulated Cash Flow" fill="#14B8A6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Summary Box */}
-            <div className="bg-gradient-to-r from-primary to-primary-light text-white rounded-xl shadow-lg p-8">
-              <h3 className="text-xl font-bold mb-4">Investment Summary</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Annual Rental Income:</span>
-                  <span className="font-semibold">{formatCurrency(monthlyRent * 12)}</span>
+            {/* Investment Summary */}
+            <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl shadow-xl p-6 border border-gray-200">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Investment Summary</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center pb-3 border-b border-gray-300">
+                  <span className="text-gray-700">Your Investment:</span>
+                  <span className="font-bold text-gray-900 text-lg">{formatCurrency(results.totalInvestment)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Annual Operating Expenses:</span>
-                  <span className="font-semibold">{formatCurrency(calculations.totalAnnualExpenses)}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Annual Rental Income:</span>
+                  <span className="font-semibold text-emerald-600">{formatCurrency(results.annualRent)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Annual EMI:</span>
-                  <span className="font-semibold">{formatCurrency(calculations.annualEMI)}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Annual Operating Expenses:</span>
+                  <span className="font-semibold text-rose-600">{formatCurrency(results.annualExpenses)}</span>
                 </div>
-                <div className="border-t border-white/30 pt-2 mt-2 flex justify-between text-base">
-                  <span className="font-bold">Net Annual Cash Flow:</span>
-                  <span className={`font-bold ${calculations.annualCashFlow > 0 ? 'text-green-300' : 'text-red-300'}`}>
-                    {formatCurrency(calculations.annualCashFlow)}
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Annual EMI Payments:</span>
+                  <span className="font-semibold text-purple-600">{formatCurrency(results.annualEMI)}</span>
+                </div>
+                <div className="flex justify-between items-center pt-3 border-t border-gray-300">
+                  <span className="font-bold text-gray-800 text-lg">Net Annual Cash Flow:</span>
+                  <span className={`font-bold text-xl ${results.annualCashFlow > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    {formatCurrency(results.annualCashFlow)}
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* Mobile: View Results Button */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+              <button
+                onClick={() => {
+                  const target = document.querySelector('.lg\\:col-span-3');
+                  if (target) {
+                    window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+                  }
+                }}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors duration-200"
+              >
+                View Results Dashboard
+              </button>
             </div>
           </div>
         </div>
