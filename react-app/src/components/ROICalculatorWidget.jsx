@@ -93,223 +93,242 @@ export default function ROICalculatorWidget() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-primary/10">
-      {/* Widget Header */}
-      <div className="bg-gradient-to-r from-primary to-primary-light text-white p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-lg">
-              <Calculator className="w-6 h-6" />
+    <div className="bg-slate-50 p-6 rounded-3xl">
+      <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
+        {/* Widget Header */}
+        <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl">
+                <Calculator className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold">ROI Calculator</h3>
+                <p className="text-sm text-indigo-100">Calculate Your Property Returns</p>
+              </div>
             </div>
+            <Link 
+              to="/roi-calculator" 
+              className="text-xs bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-xl transition-all duration-200 font-medium"
+            >
+              Full Calculator →
+            </Link>
+          </div>
+        </div>
+
+        {/* Widget Content */}
+        <div className="p-6 md:p-8">
+          {/* Quick Inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <h3 className="text-xl font-bold">ROI Calculator</h3>
-              <p className="text-sm text-white/90">Calculate Your Property Returns</p>
+              <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <Home className="w-4 h-4 text-slate-500" />
+                Purchase Price
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+                <input
+                  type="number"
+                  value={purchasePrice}
+                  onChange={(e) => setPurchasePrice(parsePositiveNumber(e.target.value))}
+                  className="w-full pl-8 pr-4 py-3 bg-slate-50 border-0 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:bg-white transition-all duration-200 text-slate-900 font-medium"
+                  placeholder="50,00,000"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-slate-500" />
+                Monthly Rent
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+                <input
+                  type="number"
+                  value={monthlyRent}
+                  onChange={(e) => setMonthlyRent(parsePositiveNumber(e.target.value))}
+                  className="w-full pl-8 pr-4 py-3 bg-slate-50 border-0 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:bg-white transition-all duration-200 text-slate-900 font-medium"
+                  placeholder="25,000"
+                />
+              </div>
             </div>
           </div>
-          <Link 
-            to="/roi-calculator" 
-            className="text-xs bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors duration-200"
+
+          {/* Loan Toggle */}
+          <div className="mb-6">
+            <label className="flex items-center cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={hasLoan}
+                onChange={(e) => setHasLoan(e.target.checked)}
+                className="w-5 h-5 text-indigo-600 focus:ring-4 focus:ring-indigo-500/10 border-slate-300 rounded"
+              />
+              <span className="ml-3 text-sm font-semibold text-slate-700 group-hover:text-indigo-600 transition-colors">Taking a loan?</span>
+            </label>
+          </div>
+
+          {/* Advanced Options Toggle */}
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 font-semibold mb-6 transition-colors"
           >
-            Full Calculator →
-          </Link>
-        </div>
-      </div>
+            {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {showAdvanced ? 'Hide' : 'Show'} Advanced Options
+          </button>
 
-      {/* Widget Content */}
-      <div className="p-6">
-        {/* Quick Inputs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Purchase Price</label>
-            <input
-              type="number"
-              value={purchasePrice}
-              onChange={(e) => setPurchasePrice(parsePositiveNumber(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-              placeholder="₹50,00,000"
-            />
-          </div>
-          
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Monthly Rent</label>
-            <input
-              type="number"
-              value={monthlyRent}
-              onChange={(e) => setMonthlyRent(parsePositiveNumber(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-              placeholder="₹25,000"
-            />
-          </div>
-        </div>
+          {/* Advanced Options - Collapsible */}
+          {showAdvanced && (
+            <div className="mb-6 p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {hasLoan && (
+                  <>
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 mb-2 block">Down Payment (%)</label>
+                      <input
+                        type="number"
+                        value={downPayment}
+                        onChange={(e) => setDownPayment(parsePositiveNumber(e.target.value))}
+                        min="10"
+                        max="80"
+                        className="w-full px-4 py-2.5 bg-white border-0 rounded-xl focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 text-slate-900 text-sm font-medium"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 mb-2 block">Interest Rate (%)</label>
+                      <input
+                        type="number"
+                        value={interestRate}
+                        onChange={(e) => setInterestRate(parsePositiveNumber(e.target.value))}
+                        step="0.25"
+                        min="6"
+                        max="12"
+                        className="w-full px-4 py-2.5 bg-white border-0 rounded-xl focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 text-slate-900 text-sm font-medium"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 mb-2 block">Loan Tenure (years)</label>
+                      <input
+                        type="number"
+                        value={loanTenure}
+                        onChange={(e) => setLoanTenure(parsePositiveNumber(e.target.value))}
+                        min="5"
+                        max="30"
+                        className="w-full px-4 py-2.5 bg-white border-0 rounded-xl focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 text-slate-900 text-sm font-medium"
+                      />
+                    </div>
+                  </>
+                )}
+                
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 mb-2 block">Appreciation Rate (%)</label>
+                  <input
+                    type="number"
+                    value={appreciationRate}
+                    onChange={(e) => setAppreciationRate(parsePositiveNumber(e.target.value))}
+                    step="0.5"
+                    min="0"
+                    max="15"
+                    className="w-full px-4 py-2.5 bg-white border-0 rounded-xl focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 text-slate-900 text-sm font-medium"
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 mb-2 block">Management Fee (%)</label>
+                  <input
+                    type="number"
+                    value={managementFee}
+                    onChange={(e) => setManagementFee(parsePositiveNumber(e.target.value))}
+                    step="0.5"
+                    min="0"
+                    max="15"
+                    className="w-full px-4 py-2.5 bg-white border-0 rounded-xl focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 text-slate-900 text-sm font-medium"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Loan Toggle */}
-        <div className="mb-4">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={hasLoan}
-              onChange={(e) => setHasLoan(e.target.checked)}
-              className="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded"
-            />
-            <span className="ml-2 text-sm font-medium text-gray-700">Taking a loan?</span>
-          </label>
-        </div>
+          {/* Results Section - Hero Number Design */}
+          <div className="bg-gradient-to-b from-slate-50 to-white p-6 rounded-2xl border border-slate-100 mb-6">
+            {/* Hero Number - Net Rental Yield */}
+            <div className="text-center mb-6 pb-6 border-b border-slate-200">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Net Rental Yield</p>
+              </div>
+              <p className="text-6xl font-bold text-emerald-600 mb-2">{calculations.netRentalYield.toFixed(2)}%</p>
+              <p className="text-sm text-slate-500">Annual return on your investment</p>
+            </div>
 
-        {/* Advanced Options Toggle */}
-        <button
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center gap-2 text-sm text-primary hover:text-primary-dark font-medium mb-4 transition-colors"
-        >
-          {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          {showAdvanced ? 'Hide' : 'Show'} Advanced Options
-        </button>
-
-        {/* Advanced Options - Collapsible */}
-        {showAdvanced && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 space-y-4">
+            {/* Secondary Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {hasLoan && (
-                <>
-                  <div>
-                    <label className="text-xs font-medium text-gray-700 mb-1 block">Down Payment (%)</label>
-                    <input
-                      type="number"
-                      value={downPayment}
-                      onChange={(e) => setDownPayment(parsePositiveNumber(e.target.value))}
-                      min="10"
-                      max="80"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                    />
+              {/* 5-Year ROI */}
+              <div className="bg-white p-4 rounded-xl border border-slate-100 hover:shadow-md transition-shadow duration-200">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-indigo-50 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-indigo-600" />
                   </div>
-                  
-                  <div>
-                    <label className="text-xs font-medium text-gray-700 mb-1 block">Interest Rate (%)</label>
-                    <input
-                      type="number"
-                      value={interestRate}
-                      onChange={(e) => setInterestRate(parsePositiveNumber(e.target.value))}
-                      step="0.25"
-                      min="6"
-                      max="12"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                    />
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">5-Year Total ROI</p>
+                    <p className="text-3xl font-bold text-indigo-600">{calculations.totalROI5Year.toFixed(2)}%</p>
+                    <p className="text-xs text-slate-500 mt-1">Including appreciation</p>
                   </div>
-                  
-                  <div>
-                    <label className="text-xs font-medium text-gray-700 mb-1 block">Loan Tenure (years)</label>
-                    <input
-                      type="number"
-                      value={loanTenure}
-                      onChange={(e) => setLoanTenure(parsePositiveNumber(e.target.value))}
-                      min="5"
-                      max="30"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                    />
+                </div>
+              </div>
+
+              {/* Monthly Cash Flow */}
+              <div className={`bg-white p-4 rounded-xl border ${calculations.monthlyCashFlow >= 0 ? 'border-emerald-100' : 'border-red-100'} hover:shadow-md transition-shadow duration-200`}>
+                <div className="flex items-start gap-3">
+                  <div className={`p-2 ${calculations.monthlyCashFlow >= 0 ? 'bg-emerald-50' : 'bg-red-50'} rounded-lg`}>
+                    <Home className={`w-5 h-5 ${calculations.monthlyCashFlow >= 0 ? 'text-emerald-600' : 'text-red-600'}`} />
                   </div>
-                </>
-              )}
-              
-              <div>
-                <label className="text-xs font-medium text-gray-700 mb-1 block">Appreciation Rate (%)</label>
-                <input
-                  type="number"
-                  value={appreciationRate}
-                  onChange={(e) => setAppreciationRate(parsePositiveNumber(e.target.value))}
-                  step="0.5"
-                  min="0"
-                  max="15"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                />
-              </div>
-              
-              <div>
-                <label className="text-xs font-medium text-gray-700 mb-1 block">Management Fee (%)</label>
-                <input
-                  type="number"
-                  value={managementFee}
-                  onChange={(e) => setManagementFee(parsePositiveNumber(e.target.value))}
-                  step="0.5"
-                  min="0"
-                  max="15"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Results - Compact Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {/* Net Rental Yield */}
-          <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-            <div className="flex items-start gap-2 mb-2">
-              <DollarSign className="w-4 h-4 text-green-600 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-xs text-green-700 font-medium">Net Rental Yield</p>
-                <p className="text-2xl font-bold text-green-800">{calculations.netRentalYield.toFixed(2)}%</p>
-                <p className="text-xs text-green-600 mt-1">Annual return on investment</p>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Monthly Cash Flow</p>
+                    <p className={`text-3xl font-bold ${calculations.monthlyCashFlow >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {formatCurrency(calculations.monthlyCashFlow)}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {calculations.monthlyCashFlow >= 0 ? 'Positive flow' : 'Negative flow'}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* 5-Year ROI */}
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
-            <div className="flex items-start gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-blue-600 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-xs text-blue-700 font-medium">5-Year Total ROI</p>
-                <p className="text-2xl font-bold text-blue-800">{calculations.totalROI5Year.toFixed(2)}%</p>
-                <p className="text-xs text-blue-600 mt-1">Including appreciation</p>
-              </div>
+          {/* Investment Summary */}
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6">
+            <div className="flex justify-between items-center text-sm mb-3">
+              <span className="text-slate-600 font-medium">Your Investment:</span>
+              <span className="font-bold text-slate-900 text-lg">{formatLargeNumber(calculations.totalInvestment)}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mb-3">
+              <span className="text-slate-600 font-medium">Annual Rental Income:</span>
+              <span className="font-bold text-slate-900 text-lg">{formatLargeNumber(monthlyRent * 12)}</span>
+            </div>
+            <div className="flex items-center text-xs text-slate-500 pt-3 border-t border-slate-300">
+              <span>*Estimated values. Use full calculator for detailed analysis.</span>
             </div>
           </div>
 
-          {/* Monthly Cash Flow */}
-          <div className={`bg-gradient-to-br ${calculations.monthlyCashFlow >= 0 ? 'from-purple-50 to-purple-100 border-purple-200' : 'from-red-50 to-red-100 border-red-200'} p-4 rounded-lg border`}>
-            <div className="flex items-start gap-2 mb-2">
-              <Home className={`w-4 h-4 ${calculations.monthlyCashFlow >= 0 ? 'text-purple-600' : 'text-red-600'} mt-0.5`} />
-              <div className="flex-1">
-                <p className={`text-xs ${calculations.monthlyCashFlow >= 0 ? 'text-purple-700' : 'text-red-700'} font-medium`}>Monthly Cash Flow</p>
-                <p className={`text-2xl font-bold ${calculations.monthlyCashFlow >= 0 ? 'text-purple-800' : 'text-red-800'}`}>
-                  {formatCurrency(calculations.monthlyCashFlow)}
-                </p>
-                <p className={`text-xs ${calculations.monthlyCashFlow >= 0 ? 'text-purple-600' : 'text-red-600'} mt-1`}>
-                  {calculations.monthlyCashFlow >= 0 ? 'Positive flow' : 'Negative flow'}
-                </p>
-              </div>
-            </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link 
+              to="/roi-calculator" 
+              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-center py-3.5 px-6 rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40"
+            >
+              View Detailed Analysis
+            </Link>
+            <Link 
+              to="/contact" 
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3.5 px-6 rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40"
+            >
+              Get Expert Advice
+            </Link>
           </div>
-        </div>
-
-        {/* Investment Summary */}
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-lg border border-gray-200">
-          <div className="flex justify-between items-center text-sm mb-2">
-            <span className="text-gray-600">Your Investment:</span>
-            <span className="font-bold text-gray-800">{formatLargeNumber(calculations.totalInvestment)}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm mb-2">
-            <span className="text-gray-600">Annual Rental Income:</span>
-            <span className="font-bold text-gray-800">{formatLargeNumber(monthlyRent * 12)}</span>
-          </div>
-          <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-300">
-            <span>*Estimated values. Use full calculator for detailed analysis.</span>
-          </div>
-        </div>
-
-        {/* CTA Button */}
-        <div className="mt-6 flex gap-3">
-          <Link 
-            to="/roi-calculator" 
-            className="flex-1 bg-primary hover:bg-primary-dark text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
-          >
-            View Detailed Analysis
-          </Link>
-          <Link 
-            to="/contact" 
-            className="flex-1 bg-accent hover:bg-accent-hover text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
-          >
-            Get Expert Advice
-          </Link>
         </div>
       </div>
     </div>
