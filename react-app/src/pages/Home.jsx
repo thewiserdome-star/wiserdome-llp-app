@@ -31,9 +31,9 @@ export default function Home() {
           <div className="hero-grid">
             {/* Left Column - Content */}
             <div className="hero-content">
-              <h1>Your Home in India,<br /><span className="text-accent">Professionally Managed</span></h1>
+              <h1>Your Property in India,<br /><span className="text-accent">on Autopilot</span></h1>
               <p className="hero-subtitle">
-                Complete peace of mind for NRIs and busy professionals. We manage your property, tenants, and maintenance while you focus on your life abroad.
+                The first super-app for NRIs to manage rentals, repairs, and wealth. No agents. No hassle. Just returns.
               </p>
 
               <div className="hero-buttons">
