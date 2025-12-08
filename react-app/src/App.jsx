@@ -37,6 +37,9 @@ import OwnerSetPassword from './pages/OwnerSetPassword';
 import OwnerDashboard from './pages/OwnerDashboard';
 import ProtectedOwnerRoute from './components/common/ProtectedOwnerRoute';
 
+// Calculator Component
+import ROICalculator from './components/ROICalculator';
+
 // Styles
 import './index.css';
 import './pages/Home.css';
@@ -71,6 +74,7 @@ function App() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/developer-websites" element={<DeveloperWebsites />} />
+            <Route path="/roi-calculator" element={<ROICalculator />} />
           </Route>
 
           {/* Owner Routes */}
