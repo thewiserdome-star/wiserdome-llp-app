@@ -132,7 +132,7 @@ export default function ROICalculator() {
                   Purchase Price
                 </label>
                 <div className="flex items-stretch">
-                  <div className="flex items-center justify-center px-4 bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg">
+                  <div className="flex items-center justify-center px-4 bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg" aria-hidden="true">
                     <IndianRupee className="w-4 h-4 text-gray-500" />
                   </div>
                   <input
@@ -150,7 +150,7 @@ export default function ROICalculator() {
                   Expected Monthly Rent
                 </label>
                 <div className="flex items-stretch">
-                  <div className="flex items-center justify-center px-4 bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg">
+                  <div className="flex items-center justify-center px-4 bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg" aria-hidden="true">
                     <IndianRupee className="w-4 h-4 text-gray-500" />
                   </div>
                   <input
@@ -168,7 +168,7 @@ export default function ROICalculator() {
                   Society Maintenance (Monthly)
                 </label>
                 <div className="flex items-stretch">
-                  <div className="flex items-center justify-center px-4 bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg">
+                  <div className="flex items-center justify-center px-4 bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg" aria-hidden="true">
                     <IndianRupee className="w-4 h-4 text-gray-500" />
                   </div>
                   <input
@@ -447,13 +447,13 @@ export default function ROICalculator() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 text-center">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Invest?</h3>
               <p className="text-gray-500 text-sm mb-6">Get expert insights and a comprehensive property audit</p>
-              <button className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+              <button className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl motion-safe:transform motion-safe:hover:-translate-y-0.5">
                 Get Detailed Property Audit
               </button>
             </div>
 
             {/* Mobile: Sticky Bottom Bar */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-2xl z-50">
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-2xl z-50" role="complementary" aria-label="Quick results summary">
               <div className="flex items-center justify-between mb-2">
                 <div>
                   <p className="text-xs text-gray-500">Monthly Cash Flow</p>
@@ -465,10 +465,15 @@ export default function ROICalculator() {
                   onClick={() => {
                     const target = document.querySelector('.lg\\:col-span-3');
                     if (target) {
-                      window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+                      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                      window.scrollTo({ 
+                        top: target.offsetTop - 80, 
+                        behavior: prefersReducedMotion ? 'auto' : 'smooth' 
+                      });
                     }
                   }}
                   className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300"
+                  aria-label="Scroll to detailed results section"
                 >
                   View Details
                 </button>
