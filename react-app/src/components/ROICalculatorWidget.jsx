@@ -306,7 +306,7 @@ export default function ROICalculatorWidget() {
           </Link>
           <Link 
             to="/contact" 
-            className="flex-1 bg-accent hover:bg-accent-dark text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+            className="flex-1 bg-accent hover:bg-accent-hover text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
           >
             Get Expert Advice
           </Link>
