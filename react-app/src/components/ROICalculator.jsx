@@ -414,7 +414,12 @@ export default function ROICalculator() {
             {/* Mobile: View Results Button */}
             <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
               <button
-                onClick={() => window.scrollTo({ top: document.querySelector('.lg\\:col-span-3').offsetTop, behavior: 'smooth' })}
+                onClick={() => {
+                  const target = document.querySelector('.lg\\:col-span-3');
+                  if (target) {
+                    window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+                  }
+                }}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors duration-200"
               >
                 View Results Dashboard

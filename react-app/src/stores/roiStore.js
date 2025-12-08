@@ -1,6 +1,33 @@
 import { create } from 'zustand';
 
 /**
+ * Calculate remaining loan balance after a certain number of years
+ * @param {number} loanAmount - Initial loan amount
+ * @param {number} monthlyEMI - Monthly EMI payment
+ * @param {number} interestRate - Annual interest rate (percentage)
+ * @param {number} loanTenure - Total loan tenure in years
+ * @param {number} yearsPaid - Number of years already paid
+ * @returns {number} - Remaining loan balance
+ */
+const calculateRemainingLoanBalance = (loanAmount, monthlyEMI, interestRate, loanTenure, yearsPaid) => {
+  if (!loanAmount || loanAmount <= 0 || !monthlyEMI || monthlyEMI <= 0) {
+    return 0;
+  }
+  
+  const monthlyInterestRate = interestRate / 100 / 12;
+  const paymentsInYears = yearsPaid * 12;
+  const totalPayments = loanTenure * 12;
+  const remainingPayments = totalPayments - paymentsInYears;
+  
+  if (remainingPayments <= 0) {
+    return 0;
+  }
+  
+  const compound = Math.pow(1 + monthlyInterestRate, remainingPayments);
+  return monthlyEMI * ((compound - 1) / (monthlyInterestRate * compound));
+};
+
+/**
  * ROI Calculator Store
  * Manages calculation results and business logic for NRI Property ROI Calculator
  */
@@ -115,10 +142,10 @@ const useROIStore = create((set) => ({
         ? (annualCashFlow / totalInvestment) * 100 
         : 0;
       
-      // 2. Cash-on-Cash Return - Similar to net yield for cash invested
-      const cashOnCashReturn = totalInvestment > 0 
-        ? (annualCashFlow / totalInvestment) * 100 
-        : 0;
+      // 2. Cash-on-Cash Return - In this context, it's identical to net yield
+      // Both measure annual cash flow as a percentage of actual cash invested
+      // In more complex scenarios, they might differ based on tax considerations
+      const cashOnCashReturn = netYield;
       
       // 3. Cap Rate - Property's potential return without financing
       const capRate = purchasePrice > 0 
@@ -130,20 +157,9 @@ const useROIStore = create((set) => ({
       const futurePropertyValue = purchasePrice * appreciationMultiplier;
       
       // Calculate remaining loan balance after 5 years
-      let remainingLoanBalance = loanAmount;
-      if (hasLoan && loanAmount > 0 && monthlyEMI > 0) {
-        const monthlyInterestRate = interestRate / 100 / 12;
-        const paymentsInFiveYears = 5 * 12;
-        const totalPayments = loanTenure * 12;
-        const remainingPayments = totalPayments - paymentsInFiveYears;
-        
-        if (remainingPayments > 0) {
-          const compound = Math.pow(1 + monthlyInterestRate, remainingPayments);
-          remainingLoanBalance = monthlyEMI * ((compound - 1) / (monthlyInterestRate * compound));
-        } else {
-          remainingLoanBalance = 0;
-        }
-      }
+      const remainingLoanBalance = hasLoan 
+        ? calculateRemainingLoanBalance(loanAmount, monthlyEMI, interestRate, loanTenure, 5)
+        : 0;
       
       const totalEquity = futurePropertyValue - remainingLoanBalance;
       const totalCashFlow = annualCashFlow * 5;
@@ -157,23 +173,12 @@ const useROIStore = create((set) => ({
       for (let year = 0; year <= 10; year++) {
         const yearMultiplier = Math.pow(1 + annualAppreciation / 100, year);
         const propertyValue = purchasePrice * yearMultiplier;
-        const cumulativeCashFlow = Math.max(0, annualCashFlow * year);
+        const cumulativeCashFlow = annualCashFlow * year; // Keep negative values to show realistic scenarios
         
-        // Calculate loan balance for each year
-        let loanBalance = loanAmount;
-        if (hasLoan && loanAmount > 0 && monthlyEMI > 0) {
-          const monthlyInterestRate = interestRate / 100 / 12;
-          const paymentsInYear = year * 12;
-          const totalPayments = loanTenure * 12;
-          const remainingPayments = totalPayments - paymentsInYear;
-          
-          if (remainingPayments > 0) {
-            const compound = Math.pow(1 + monthlyInterestRate, remainingPayments);
-            loanBalance = monthlyEMI * ((compound - 1) / (monthlyInterestRate * compound));
-          } else {
-            loanBalance = 0;
-          }
-        }
+        // Calculate loan balance for each year using helper function
+        const loanBalance = hasLoan 
+          ? calculateRemainingLoanBalance(loanAmount, monthlyEMI, interestRate, loanTenure, year)
+          : 0;
         
         const equity = propertyValue - loanBalance;
         
