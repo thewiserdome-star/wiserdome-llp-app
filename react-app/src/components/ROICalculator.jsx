@@ -2,14 +2,17 @@ import React, { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Calculator, TrendingUp, DollarSign, PiggyBank, Home } from 'lucide-react';
 
+// Helper function for input validation
+const parsePositiveNumber = (value) => Math.max(0, parseFloat(value) || 0);
+
 // Reusable SliderInput Component
-const SliderInput = ({ label, value, onChange, min = 0, max = 100, step = 1, suffix = '%', unit = '' }) => {
+const SliderInput = ({ label, value, onChange, min = 0, max = 100, step = 1, suffix = '%' }) => {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-2">
         <label className="text-sm font-medium text-gray-700">{label}</label>
         <span className="text-sm font-semibold text-primary">
-          {unit}{value.toLocaleString('en-IN')}{suffix}
+          {value.toLocaleString('en-IN')}{suffix}
         </span>
       </div>
       <input
@@ -22,8 +25,8 @@ const SliderInput = ({ label, value, onChange, min = 0, max = 100, step = 1, suf
         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
       />
       <div className="flex justify-between text-xs text-gray-500 mt-1">
-        <span>{unit}{min.toLocaleString('en-IN')}{suffix}</span>
-        <span>{unit}{max.toLocaleString('en-IN')}{suffix}</span>
+        <span>{min.toLocaleString('en-IN')}{suffix}</span>
+        <span>{max.toLocaleString('en-IN')}{suffix}</span>
       </div>
     </div>
   );
@@ -80,8 +83,8 @@ export default function ROICalculator() {
         const monthlyInterestRate = interestRate / 100 / 12;
         const numberOfPayments = loanTenure * 12;
         if (monthlyInterestRate > 0) {
-          monthlyEMI = (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / 
-                       (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+          const compound = Math.pow(1 + monthlyInterestRate, numberOfPayments);
+          monthlyEMI = (loanAmount * monthlyInterestRate * compound) / (compound - 1);
         }
       }
       const annualEMI = monthlyEMI * 12;
@@ -197,7 +200,7 @@ export default function ROICalculator() {
               <input
                 type="number"
                 value={purchasePrice}
-                onChange={(e) => setPurchasePrice(Math.max(0, parseFloat(e.target.value) || 0))}
+                onChange={(e) => setPurchasePrice(parsePositiveNumber(e.target.value))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Enter purchase price"
               />
@@ -209,7 +212,7 @@ export default function ROICalculator() {
               <input
                 type="number"
                 value={monthlyRent}
-                onChange={(e) => setMonthlyRent(Math.max(0, parseFloat(e.target.value) || 0))}
+                onChange={(e) => setMonthlyRent(parsePositiveNumber(e.target.value))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Enter monthly rent"
               />
@@ -286,7 +289,7 @@ export default function ROICalculator() {
                 <input
                   type="number"
                   value={annualMaintenance}
-                  onChange={(e) => setAnnualMaintenance(Math.max(0, parseFloat(e.target.value) || 0))}
+                  onChange={(e) => setAnnualMaintenance(parsePositiveNumber(e.target.value))}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
@@ -297,7 +300,7 @@ export default function ROICalculator() {
                 <input
                   type="number"
                   value={propertyTax}
-                  onChange={(e) => setPropertyTax(Math.max(0, parseFloat(e.target.value) || 0))}
+                  onChange={(e) => setPropertyTax(parsePositiveNumber(e.target.value))}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
