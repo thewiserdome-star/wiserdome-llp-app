@@ -324,13 +324,13 @@ export default function ROICalculatorWidget() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link 
               to="/roi-calculator" 
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-center py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] border border-indigo-500/20"
+              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-center py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:translate-y-[-2px] border border-indigo-500/20"
             >
               View Detailed Analysis
             </Link>
             <Link 
               to="/contact" 
-              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-center py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 shadow-xl shadow-emerald-500/30 hover:shadow-2xl hover:shadow-emerald-500/40 hover:scale-[1.02] border border-emerald-500/20"
+              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-center py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 shadow-xl shadow-emerald-500/30 hover:shadow-2xl hover:shadow-emerald-500/40 hover:translate-y-[-2px] border border-emerald-500/20"
             >
               Get Expert Advice
             </Link>

@@ -366,7 +366,10 @@ input[type="checkbox"] {
 }
 
 /* Focus visible for better accessibility */
-*:focus-visible {
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: 2px solid #4F46E5;
   outline-offset: 2px;
 }
