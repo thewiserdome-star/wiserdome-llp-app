@@ -70,7 +70,6 @@ export default function Header() {
             <Link to="/services" className={`nav-link ${isActive('/services') ? 'active' : ''}`} onClick={handleNavClick}>Services</Link>
             <Link to="/developer-websites" className={`nav-link ${isActive('/developer-websites') ? 'active' : ''}`} onClick={handleNavClick}>Website Development</Link>
             <Link to="/pricing" className={`nav-link ${isActive('/pricing') ? 'active' : ''}`} onClick={handleNavClick}>Pricing</Link>
-            <Link to="/roi-calculator" className={`nav-link ${isActive('/roi-calculator') ? 'active' : ''}`} onClick={handleNavClick}>ROI Calculator</Link>
             <Link to="/how-it-works" className={`nav-link ${isActive('/how-it-works') ? 'active' : ''}`} onClick={handleNavClick}>How It Works</Link>
             <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`} onClick={handleNavClick}>About</Link>
             <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'active' : ''}`} onClick={handleNavClick}>Contact</Link>

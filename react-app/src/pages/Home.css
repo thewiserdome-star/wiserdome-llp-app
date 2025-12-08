@@ -739,28 +739,3 @@
     text-align: center;
   }
 }
-
-/* =========================================
-   ROI CALCULATOR WIDGET SECTION
-   ========================================= */
-
-.section-roi-widget {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  padding: var(--spacing-4xl) 0;
-}
-
-.roi-widget-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Responsive adjustments for ROI widget */
-@media (max-width: 768px) {
-  .section-roi-widget {
-    padding: var(--spacing-2xl) 0;
-  }
-  
-  .roi-widget-container {
-    padding: 0 var(--spacing-md);
-  }
-}
