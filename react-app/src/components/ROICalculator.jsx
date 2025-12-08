@@ -107,7 +107,7 @@ export default function ROICalculator() {
               <Calculator className="w-10 h-10 text-white" />
             </div>
           </div>
-          <h1 className="text-5xl font-bold font-semibold text-slate-900 mb-3">
+          <h1 className="text-5xl font-bold text-slate-900 mb-3">
             NRI Property ROI Calculator
           </h1>
           <p className="text-slate-500 text-lg max-w-2xl mx-auto">
@@ -260,7 +260,7 @@ export default function ROICalculator() {
           </div>
 
           {/* Right Side - Results */}
-          <div className="flex-1 flex flex-col gap-6 lg:sticky lg:top-8 lg:self-start">
+          <div id="results-section" className="flex-1 flex flex-col gap-6 lg:sticky lg:top-8 lg:self-start">
             {/* Hero Metric - Net Rental Yield with Gradient */}
             <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg p-6 text-white">
               <div className="text-center">
@@ -449,11 +449,11 @@ export default function ROICalculator() {
                 </div>
                 <button
                   onClick={() => {
-                    const target = document.querySelector('.flex-1.flex.flex-col.gap-6');
-                    if (target) {
+                    const resultsSection = document.getElementById('results-section');
+                    if (resultsSection) {
                       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                       window.scrollTo({ 
-                        top: target.offsetTop - 80, 
+                        top: resultsSection.offsetTop - 80, 
                         behavior: prefersReducedMotion ? 'auto' : 'smooth' 
                       });
                     }
