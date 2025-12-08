@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import './Home.css';
+import ROICalculatorWidget from '../components/ROICalculatorWidget';
 
 // Pricing configuration - centralized for easy updates
 const PRICING_CONFIG = {
@@ -292,6 +293,21 @@ export default function Home() {
           <p className="pricing-note">
             * Pricing subject to property audit. Final quote shared after assessment.
           </p>
+        </div>
+      </section>
+
+      {/* ROI Calculator Widget Section */}
+      <section className="section section-roi-widget">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-label">Calculate Returns</span>
+            <h2>See Your Investment Potential</h2>
+            <p>Use our interactive calculator to estimate the returns on your rental property investment</p>
+          </div>
+
+          <div className="roi-widget-container">
+            <ROICalculatorWidget />
+          </div>
         </div>
       </section>
 
