@@ -24,139 +24,87 @@
   - 3xl: 4rem (64px), 4xl: 6rem (96px)
 */
 
-:root {
-  /* Shadcn/Tailwind tokens */
-  --background: 0 0% 100%;
-  --foreground: 222.2 47.4% 11.2%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 47.4% 11.2%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 47.4% 11.2%;
-  --primary: 241 54% 40%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 242.2 76.2% 53.9%;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+@layer base {
+  :root {
+    /* --- SHADCN/TAILWIND TOKENS (REQUIRED FOR UI COMPONENTS) --- */
+    /* These control the colors of buttons, cards, inputs, etc. */
+    
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%; /* Dark Blue-Grey text */
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    
+    /* YOUR CUSTOM PRIMARY: Deep Indigo (Matches your trust theme) */
+    --primary: 241 54% 40%; 
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 242.2 76.2% 53.9%;
+    
+    /* Radius - Merged from the second block */
+    --radius: 0.5rem; 
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
 
-  /* Colors - Deep Indigo/Blue Primary for Trust */
-  --color-primary: #3730A3;
-  --color-primary-light: #4F46E5;
-  --color-primary-dark: #312E81;
-  
-  /* Accent - Warm Amber for CTAs */
-  --color-accent: #F59E0B;
-  --color-accent-hover: #D97706;
-  --color-accent-light: #FCD34D;
-  
-  /* Secondary Accent - Teal for variety */
-  --color-secondary: #14B8A6;
-  --color-secondary-hover: #0D9488;
-  
-  /* Backgrounds */
-  --color-bg-white: #FFFFFF;
-  --color-bg-light: #F8FAFC;
-  --color-bg-alt: #F1F5F9;
-  --color-bg-dark: #0F172A;
-  --color-bg-primary-subtle: #EEF2FF;
-  
-  /* Text Colors */
-  --color-text-heading: #1E293B;
-  --color-text-body: #475569;
-  --color-text-light: #94A3B8;
-  --color-text-white: #FFFFFF;
-  
-  /* Border & Dividers */
-  --color-border: #E2E8F0;
-  --color-border-light: #F1F5F9;
-  
-  /* Success/Error States */
-  --color-success: #10B981;
-  --color-error: #EF4444;
-  
-  /* Typography */
-  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --font-size-4xl: 2.25rem;
-  --font-size-5xl: 3rem;
-  
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
-  
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 3rem;
-  --spacing-3xl: 4rem;
-  --spacing-4xl: 6rem;
-  --spacing-5xl: 8rem;
-  
-  /* Layout */
-  --container-width: 1200px;
-  --header-height: 72px;
-  --border-radius-sm: 6px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-  --border-radius-xl: 16px;
-  --border-radius-full: 9999px;
-  
-  /* Shadows - More refined for modern look */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.1);
-  
-  /* Transitions */
-  --transition-fast: all 0.15s ease;
-  --transition-base: all 0.3s ease;
-  --transition-slow: all 0.5s ease;
-}
-
-:root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 5.9% 10%;
-  --radius: 0.5rem;
+    /* --- YOUR CUSTOM CSS VARIABLES --- */
+    /* Colors - Deep Indigo/Blue Primary for Trust */
+    --color-primary: #3730A3;
+    --color-primary-light: #4F46E5;
+    --color-primary-dark: #312E81;
+    
+    /* Accent - Warm Amber for CTAs */
+    --color-accent: #F59E0B;
+    --color-accent-hover: #D97706;
+    --color-accent-light: #FCD34D;
+    
+    /* Secondary Accent - Teal for variety */
+    --color-secondary: #14B8A6;
+    --color-secondary-hover: #0D9488;
+    
+    /* Backgrounds */
+    --color-bg-white: #FFFFFF;
+    --color-bg-light: #F8FAFC;
+    --color-bg-alt: #F1F5F9;
+    --color-bg-dark: #0F172A;
+    --color-bg-primary-subtle: #EEF2FF;
+    
+    /* Text Colors */
+    --color-text-heading: #1E293B;
+    --color-text-body: #475569;
+    --color-text-light: #94A3B8;
+    --color-text-white: #FFFFFF;
+    
+    /* Border & Dividers */
+    --color-border: #E2E8F0;
+    --color-border-light: #F1F5F9;
+    
+    /* Success/Error States */
+    --color-success: #10B981;
+    --color-error: #EF4444;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  }
 }
 
 /* Reset & Base Styles */
