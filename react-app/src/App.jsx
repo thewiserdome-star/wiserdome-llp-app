@@ -72,7 +72,7 @@ function App() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/developer-websites" element={<DeveloperWebsites />} />
-            <Route path="/RoiCalculator" element={<RoiCalculator />} />
+            <Route path="/roi-calculator" element={<RoiCalculator />} />
           </Route>
 
           {/* Owner Routes */}
