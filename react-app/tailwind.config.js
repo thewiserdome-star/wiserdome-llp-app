@@ -3,6 +3,8 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    // <CHANGE> Add npm package to Tailwind content scanning
+    "./node_modules/@wiserdomenpm/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
