@@ -1,4 +1,4 @@
-import ROICalculator from '@wiserdomenpm/roi-calculator/components/roi-calculator'
+import { ROICalculator } from '@wiserdomenpm/roi-calculator'
 
 export default function RoiCalculatorPage() {
   return (
