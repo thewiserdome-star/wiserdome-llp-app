@@ -107,7 +107,7 @@ function App() {
             <Route path="developer-websites" element={<AdminDeveloperWebsites />} />
             <Route path="property-owners" element={<AdminPropertyOwners />} />
             <Route path="owner-properties" element={<AdminOwnerProperties />} />
-            <Route path="/roi-calculator" element={<ROICalculator />} />
+            <Route path="roi-calculator" element={<ROICalculator />} />
           </Route>
         </Routes>
       </BrowserRouter>
