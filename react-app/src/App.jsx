@@ -13,7 +13,7 @@ import Pricing from './pages/Pricing';
 import HowItWorks from './pages/HowItWorks';
 import Contact from './pages/Contact';
 import DeveloperWebsites from './pages/DeveloperWebsites';
-import RoiCalculator from './pages/RoiCalculator';
+import ROICalculator from './pages/RoiCalculator';
 
 // Admin Pages
 import AdminLogin from './pages/AdminLogin';
@@ -72,7 +72,7 @@ function App() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/developer-websites" element={<DeveloperWebsites />} />
-            <Route path="/roi-calculator" element={<RoiCalculator />} />
+            <Route path="/roi-calculator" element={<ROICalculator />} />
           </Route>
 
           {/* Owner Routes */}
