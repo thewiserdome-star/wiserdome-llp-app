@@ -161,6 +161,29 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ROI Calculator Teaser */}
+      <section className="section section-roi">
+        <div className="container">
+          <div className="roi-card">
+            <div className="roi-content">
+              <span className="section-label">Financial Planning</span>
+              <h2>Calculate Your Property ROI</h2>
+              <p>
+                Curious about your potential rental yield? Use our advanced ROI calculator to estimate your annual returns,
+                cash flow, and long-term appreciation with Wiserdome's professional management.
+              </p>
+              <Link to="/roi-calculator" className="btn btn-primary btn-lg">
+                Try ROI Calculator
+              </Link>
+            </div>
+            <div className="roi-visual">
+              <span className="roi-icon">📊</span>
+              <span className="roi-icon">💰</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Control Section - 3 Column Cards */}
       <section className="section section-control">
         <div className="container">

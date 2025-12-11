@@ -28,16 +28,19 @@ export const useROIStore = create((set) => ({
   calculateROI: (data) => {
     const { purchasePrice, monthlyRent, annualAppreciation, managementFeePercent, maintenanceCharges } = data
 
+    // Monthly costs
     const monthlyManagementFee = (monthlyRent * managementFeePercent) / 100
     const monthlyMaintenanceCost = maintenanceCharges
 
     const monthlyNetIncome = monthlyRent - monthlyManagementFee - monthlyMaintenanceCost
     const monthlyCashFlow = monthlyNetIncome
 
+    // Annual metrics
     const annualGrossRent = monthlyRent * 12
     const annualNetIncome = monthlyCashFlow * 12
     const annualAppreciationAmount = (purchasePrice * annualAppreciation) / 100
 
+    // Key yields and returns (no loan involved)
     const grossYield = purchasePrice > 0 ? (annualGrossRent / purchasePrice) * 100 : 0
     const netYield = purchasePrice > 0 ? (annualNetIncome / purchasePrice) * 100 : 0
     const capRate =
@@ -45,6 +48,7 @@ export const useROIStore = create((set) => ({
         ? ((annualGrossRent - (monthlyMaintenanceCost + monthlyManagementFee) * 12) / purchasePrice) * 100
         : 0
 
+    // 5-Year projection (full equity since no loan)
     const yearlyProjection = []
     let cumulativeCashFlow = 0
     let currentPropertyValue = purchasePrice
@@ -90,4 +94,3 @@ export const useROIStore = create((set) => ({
     })
   },
 }))
-
