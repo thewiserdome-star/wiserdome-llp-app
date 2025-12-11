@@ -1,9 +1,5 @@
-import ROICalculator from '../components/ROICalculator'
+import ROICalculator from "../../components/roi-calculator"
 
-export default function RoiCalculatorPage() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <ROICalculator />
-    </div>
-  )
+export default function ROICalculatorPage() {
+  return <ROICalculator />
 }
