@@ -24,7 +24,6 @@ export function ROICalculator() {
     const capRate = (yearlyCashFlow / purchasePrice) * 100
     const netYield = capRate
 
-    // 5-year projection
     const projectionData = []
     for (let year = 1; year <= 5; year++) {
       const appreciatedValue = purchasePrice * Math.pow(1 + appreciation / 100, year)
@@ -53,43 +52,46 @@ export function ROICalculator() {
   }, [purchasePrice, monthlyRent, appreciation, managementFee, maintenance, exchangeRate])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 md:p-12">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="max-w-6xl mx-auto mb-12">
-        <div className="text-center mb-8">
-          <div className="inline-block px-3 py-1 bg-teal-50 rounded-full mb-4">
-            <span className="text-sm font-semibold text-teal-600">
-              <span className="inline-block w-2 h-2 bg-teal-500 rounded-full mr-2"></span>
+      <div className="max-w-7xl mx-auto mb-16">
+        <div className="text-center mb-12">
+          <div className="inline-block px-4 py-2 bg-teal-50 rounded-full mb-6">
+            <span className="text-sm font-semibold text-teal-600 flex items-center gap-2">
+              <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
               Real-time calculations
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">NRI Property ROI Calculator</h1>
-          <p className="text-lg text-slate-600">
+          <h1 className="text-5xl font-bold text-slate-900 mb-4">NRI Property ROI Calculator</h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Calculate your Indian real estate investment returns with precision. Factor in loans, management fees, and
             appreciation to make informed decisions.
           </p>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto">
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Inputs */}
-          <div className="lg:col-span-1">
+          <div className="flex flex-col gap-6">
             {/* Currency Toggle */}
-            <div className="mb-6 flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={() => setCurrency("INR")}
-                className={`flex-1 py-2 px-3 rounded-lg font-semibold transition-all ${
-                  currency === "INR" ? "bg-teal-500 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                  currency === "INR"
+                    ? "bg-teal-500 text-white shadow-md"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                 }`}
               >
                 ₹ INR
               </button>
               <button
                 onClick={() => setCurrency("USD")}
-                className={`flex-1 py-2 px-3 rounded-lg font-semibold transition-all ${
-                  currency === "USD" ? "bg-teal-500 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                  currency === "USD"
+                    ? "bg-teal-500 text-white shadow-md"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                 }`}
               >
                 $ USD
@@ -97,43 +99,43 @@ export function ROICalculator() {
             </div>
 
             {/* Property Details Card */}
-            <div className="bg-white rounded-xl p-6 mb-6 shadow-sm border border-slate-200">
-              <div className="flex items-center gap-2 mb-6">
-                <Home className="w-5 h-5 text-teal-600" />
+            <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200">
+              <div className="flex items-center gap-3 mb-6">
+                <Home className="w-5 h-5 text-teal-500" />
                 <h2 className="text-lg font-bold text-slate-900">Property Details</h2>
               </div>
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Purchase Price</label>
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">Purchase Price</label>
                   <div className="relative">
                     <span className="absolute left-3 top-3 text-slate-500">{currencySymbol}</span>
                     <input
                       type="number"
                       value={purchasePrice}
                       onChange={(e) => setPurchasePrice(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Expected Monthly Rent</label>
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">Expected Monthly Rent</label>
                   <div className="relative">
                     <span className="absolute left-3 top-3 text-slate-500">{currencySymbol}</span>
                     <input
                       type="number"
                       value={monthlyRent}
                       onChange={(e) => setMonthlyRent(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <label className="text-sm font-semibold text-slate-700">Annual Appreciation</label>
-                    <span className="text-teal-600 font-semibold">{appreciation}%</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-sm font-semibold text-slate-900">Annual Appreciation</label>
+                    <span className="text-teal-600 font-bold">{appreciation}%</span>
                   </div>
                   <Slider
                     value={[appreciation]}
@@ -143,7 +145,7 @@ export function ROICalculator() {
                     step={0.5}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-slate-500 mt-1">
+                  <div className="flex justify-between text-xs text-slate-500 mt-2">
                     <span>0%</span>
                     <span>15%</span>
                   </div>
@@ -152,17 +154,17 @@ export function ROICalculator() {
             </div>
 
             {/* Costs & Fees Card */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-              <div className="flex items-center gap-2 mb-6">
-                <DollarSign className="w-5 h-5 text-teal-600" />
+            <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200">
+              <div className="flex items-center gap-3 mb-6">
+                <DollarSign className="w-5 h-5 text-teal-500" />
                 <h2 className="text-lg font-bold text-slate-900">Costs & Fees</h2>
               </div>
 
               <div className="space-y-5">
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <label className="text-sm font-semibold text-slate-700">Property Management Fee</label>
-                    <span className="text-teal-600 font-semibold">{managementFee}%</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-sm font-semibold text-slate-900">Property Management Fee</label>
+                    <span className="text-teal-600 font-bold">{managementFee}%</span>
                   </div>
                   <Slider
                     value={[managementFee]}
@@ -172,14 +174,14 @@ export function ROICalculator() {
                     step={0.5}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-slate-500 mt-1">
+                  <div className="flex justify-between text-xs text-slate-500 mt-2">
                     <span>0%</span>
                     <span>20%</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">
                     Society Maintenance (Monthly)
                   </label>
                   <div className="relative">
@@ -188,7 +190,7 @@ export function ROICalculator() {
                       type="number"
                       value={maintenance}
                       onChange={(e) => setMaintenance(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                     />
                   </div>
                 </div>
@@ -197,82 +199,79 @@ export function ROICalculator() {
           </div>
 
           {/* Right Column - Results */}
-          <div className="lg:col-span-2">
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="flex flex-col gap-6">
+            {/* Key Metrics Grid */}
+            <div className="grid grid-cols-2 gap-4">
               {/* Monthly Cash Flow */}
-              <div className="bg-teal-500 text-white rounded-xl p-6 shadow-lg">
-                <div className="text-sm font-semibold text-teal-100 mb-1">MONTHLY CASH FLOW</div>
-                <div className="text-3xl font-bold mb-2">
+              <div className="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-xl p-6 shadow-lg">
+                <div className="text-xs font-bold opacity-80 uppercase tracking-wider mb-2">Monthly Cash Flow</div>
+                <div className="text-3xl font-bold mb-1">
                   {currencySymbol}
                   {calculations.monthlyNetCashFlow.toLocaleString()}
                 </div>
-                <div className="text-sm text-teal-100">After all expenses</div>
+                <div className="text-sm opacity-80">After all expenses</div>
               </div>
 
               {/* Net Yield */}
-              <div className="bg-slate-800 text-white rounded-xl p-6 shadow-lg">
-                <div className="text-sm font-semibold text-slate-300 mb-1">NET YIELD</div>
-                <div className="text-3xl font-bold mb-2">{calculations.netYield}%</div>
-                <div className="text-sm text-slate-300">Annual return on property</div>
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-6 shadow-lg">
+                <div className="text-xs font-bold opacity-70 uppercase tracking-wider mb-2">Net Yield</div>
+                <div className="text-3xl font-bold mb-1">{calculations.netYield}%</div>
+                <div className="text-sm opacity-70">Annual return on property</div>
               </div>
             </div>
 
             {/* CAP Rate */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200 mb-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-semibold text-slate-600 mb-1">CAP RATE</div>
-                  <div className="text-3xl font-bold text-slate-900">{calculations.capRate}%</div>
-                  <div className="text-sm text-slate-500 mt-1">Operating income ratio</div>
-                </div>
-                <TrendingUp className="w-12 h-12 text-teal-500 opacity-20" />
+            <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200 flex items-center justify-between">
+              <div>
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">CAP Rate</div>
+                <div className="text-3xl font-bold text-slate-900">{calculations.capRate}%</div>
+                <div className="text-sm text-slate-500 mt-1">Operating income ratio</div>
               </div>
+              <TrendingUp className="w-12 h-12 text-teal-200" />
             </div>
 
             {/* 5-Year Projection Chart */}
-            <div className="bg-slate-800 text-white rounded-xl p-6 shadow-lg mb-6">
-              <h3 className="text-sm font-bold text-slate-300 mb-4">5-YEAR WEALTH PROJECTION</h3>
-              <ResponsiveContainer width="100%" height={300}>
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-xs font-bold opacity-70 uppercase tracking-wider mb-4">5-Year Wealth Projection</h3>
+              <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={calculations.projectionData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                  <XAxis dataKey="year" stroke="#94a3b8" />
-                  <YAxis stroke="#94a3b8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="year" stroke="rgba(255,255,255,0.5)" />
+                  <YAxis stroke="rgba(255,255,255,0.5)" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1e293b",
-                      border: "1px solid #475569",
+                      background: "rgba(15, 23, 42, 0.9)",
+                      border: "1px solid rgba(20, 184, 166, 0.3)",
                       borderRadius: "8px",
                     }}
-                    formatter={(value) => `${currencySymbol}${value.toLocaleString()}`}
                   />
                   <Line
                     type="monotone"
                     dataKey="wealth"
                     stroke="#14b8a6"
-                    strokeWidth={2}
-                    dot={{ fill: "#14b8a6", r: 4 }}
-                    activeDot={{ r: 6 }}
+                    strokeWidth={3}
+                    dot={{ fill: "#14b8a6", r: 5 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
+
               <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-slate-700">
                 <div>
-                  <div className="text-xs font-semibold text-slate-400 mb-1">Equity Gain</div>
+                  <div className="text-xs opacity-60 mb-1">Equity Gain</div>
                   <div className="text-lg font-bold text-teal-400">
                     {currencySymbol}
                     {calculations.projectionData[4]?.equity.toLocaleString()}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs font-semibold text-slate-400 mb-1">Cash Flow</div>
+                  <div className="text-xs opacity-60 mb-1">Cash Flow</div>
                   <div className="text-lg font-bold text-teal-400">
                     {currencySymbol}
                     {calculations.projectionData[4]?.cashFlow.toLocaleString()}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs font-semibold text-slate-400 mb-1">Total Wealth</div>
+                  <div className="text-xs opacity-60 mb-1">Total Wealth</div>
                   <div className="text-lg font-bold text-teal-400">
                     {currencySymbol}
                     {calculations.projectionData[4]?.wealth.toLocaleString()}
@@ -282,33 +281,33 @@ export function ROICalculator() {
             </div>
 
             {/* Monthly Breakdown */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-              <h3 className="font-bold text-slate-900 mb-4">MONTHLY BREAKDOWN</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
+            <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200">
+              <h3 className="text-sm font-bold text-slate-900 mb-6 uppercase tracking-wider">Monthly Breakdown</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
                   <span className="text-slate-600">Gross Rent</span>
-                  <span className="font-semibold text-teal-600">
+                  <span className="font-bold text-teal-600">
                     +{currencySymbol}
                     {calculations.monthlyGrossRent.toLocaleString()}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-slate-600">Management Fee</span>
-                  <span className="font-semibold text-red-600">
+                  <span className="font-bold text-red-600">
                     -{currencySymbol}
                     {calculations.monthlyManagementFee.toLocaleString()}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-slate-600">Maintenance</span>
-                  <span className="font-semibold text-red-600">
+                  <span className="font-bold text-red-600">
                     -{currencySymbol}
                     {maintenance.toLocaleString()}
                   </span>
                 </div>
-                <div className="pt-3 border-t border-slate-200 flex justify-between">
-                  <span className="font-bold text-slate-900">Net Cash Flow</span>
-                  <span className="font-bold text-teal-600">
+                <div className="border-t border-slate-200 pt-4 flex justify-between items-center">
+                  <span className="font-semibold text-slate-900">Net Cash Flow</span>
+                  <span className="text-xl font-bold text-teal-600">
                     {currencySymbol}
                     {calculations.monthlyNetCashFlow.toLocaleString()}
                   </span>
