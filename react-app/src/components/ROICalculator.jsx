@@ -18,6 +18,7 @@ import {
   Baseline as ChartLine,
 } from "lucide-react"
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts"
+import "./ROICalculator.css"
 
 const defaultValues = {
   purchasePrice: 10000000,
@@ -77,9 +78,12 @@ function ROICalculator() {
               onClick={() => setCurrency("INR")}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                 currency === "INR"
-                  ? "bg-emerald-500 text-white"
+                  ? "text-white"
                   : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
               }`}
+              style={{
+                backgroundColor: currency === "INR" ? "var(--color-secondary)" : undefined
+              }}
             >
               ₹ INR
             </button>
@@ -88,9 +92,12 @@ function ROICalculator() {
               onClick={() => setCurrency("USD")}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                 currency === "USD"
-                  ? "bg-emerald-500 text-white"
+                  ? "text-white"
                   : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
               }`}
+              style={{
+                backgroundColor: currency === "USD" ? "var(--color-secondary)" : undefined
+              }}
             >
               $ USD
             </button>
@@ -99,7 +106,7 @@ function ROICalculator() {
 
         <Card className="p-6 border-border/60">
           <div className="flex items-center gap-2 mb-6">
-            <Building2 className="w-5 h-5 text-emerald-500" />
+            <Building2 className="w-5 h-5" style={{ color: "var(--color-secondary)" }} />
             <h2 className="text-lg font-semibold">Property Details</h2>
           </div>
 
@@ -137,7 +144,7 @@ function ROICalculator() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">Annual Appreciation</Label>
-                <span className="text-lg font-semibold text-emerald-500">{watchedValues.annualAppreciation}%</span>
+                <span className="text-lg font-semibold" style={{ color: "var(--color-secondary)" }}>{watchedValues.annualAppreciation}%</span>
               </div>
               <Slider
                 value={[watchedValues.annualAppreciation || 5]}
@@ -157,7 +164,7 @@ function ROICalculator() {
 
         <Card className="p-6 border-border/60">
           <div className="flex items-center gap-2 mb-6">
-            <Wallet className="w-5 h-5 text-emerald-500" />
+            <Wallet className="w-5 h-5" style={{ color: "var(--color-secondary)" }} />
             <h2 className="text-lg font-semibold">Costs & Fees</h2>
           </div>
 
@@ -165,7 +172,7 @@ function ROICalculator() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">Property Management Fee</Label>
-                <span className="text-lg font-semibold text-emerald-500">{watchedValues.managementFeePercent}%</span>
+                <span className="text-lg font-semibold" style={{ color: "var(--color-secondary)" }}>{watchedValues.managementFeePercent}%</span>
               </div>
               <Slider
                 value={[watchedValues.managementFeePercent || 8]}
@@ -201,7 +208,9 @@ function ROICalculator() {
 
       <div className="w-full lg:w-1/2 lg:sticky lg:top-8 lg:self-start space-y-6">
         <div className="grid grid-cols-2 gap-4">
-          <Card className={`p-5 border-0 ${results.isCashFlowPositive ? "bg-emerald-500" : "bg-rose-500"} text-white`}>
+          <Card className="p-5 border-0 text-white" style={{
+            backgroundColor: results.isCashFlowPositive ? "var(--color-secondary)" : "var(--color-error)"
+          }}>
             <div className="flex items-center gap-2 mb-2">
               {results.isCashFlowPositive ? (
                 <TrendingUp className="w-4 h-4 opacity-80" />
@@ -214,7 +223,7 @@ function ROICalculator() {
             <p className="text-xs opacity-70 mt-1">After all expenses</p>
           </Card>
 
-          <Card className="p-5 border-0 bg-slate-800 text-white">
+          <Card className="p-5 border-0 text-white" style={{ backgroundColor: "var(--color-primary)" }}>
             <div className="flex items-center gap-2 mb-2">
               <Percent className="w-4 h-4 opacity-80" />
               <span className="text-xs font-medium uppercase tracking-wider opacity-80">Net Yield</span>
@@ -225,7 +234,7 @@ function ROICalculator() {
 
           <Card className="p-5 border-border/60 bg-card col-span-2">
             <div className="flex items-center gap-2 mb-2">
-              <ChartLine className="w-4 h-4 text-emerald-500" />
+              <ChartLine className="w-4 h-4" style={{ color: "var(--color-secondary)" }} />
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Cap Rate</span>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-foreground">{results.capRate.toFixed(2)}%</p>
@@ -233,17 +242,20 @@ function ROICalculator() {
           </Card>
         </div>
 
-        <Card className="p-6 border-border/60 bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+        <Card className="p-6 border-border/60 text-white" style={{
+          backgroundImage: "linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%)"
+        }}>
           <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 opacity-80">5-Year Wealth Projection</h3>
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div>
               <p className="text-xs opacity-60 mb-1">Equity Gain</p>
-              <p className="text-lg font-bold text-emerald-400">{formatCurrency(results.fiveYearEquityGain, true)}</p>
+              <p className="text-lg font-bold" style={{ color: "var(--color-secondary)" }}>{formatCurrency(results.fiveYearEquityGain, true)}</p>
             </div>
             <div>
               <p className="text-xs opacity-60 mb-1">Cash Flow</p>
               <p
-                className={`text-lg font-bold ${results.fiveYearCashFlow >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                className="text-lg font-bold"
+                style={{ color: results.fiveYearCashFlow >= 0 ? "var(--color-secondary)" : "var(--color-error)" }}
               >
                 {formatCurrency(results.fiveYearCashFlow, true)}
               </p>
@@ -259,8 +271,8 @@ function ROICalculator() {
               <AreaChart data={results.yearlyProjection} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorEquity" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+                    <stop offset="5%" stopColor="#14B8A6" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#14B8A6" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
@@ -268,7 +280,7 @@ function ROICalculator() {
                 <YAxis stroke="rgba(255,255,255,0.5)" fontSize={10} tickFormatter={(v) => formatCurrency(v, true)} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "rgba(30, 41, 59, 0.95)",
+                    backgroundColor: "rgba(15, 23, 42, 0.95)",
                     border: "none",
                     borderRadius: "8px",
                     color: "#fff",
@@ -279,7 +291,7 @@ function ROICalculator() {
                 <Area
                   type="monotone"
                   dataKey="totalWealth"
-                  stroke="#10b981"
+                  stroke="#14B8A6"
                   fillOpacity={1}
                   fill="url(#colorEquity)"
                   name="Total Wealth"
@@ -294,19 +306,19 @@ function ROICalculator() {
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b border-border/40">
               <span className="text-sm text-muted-foreground">Gross Rent</span>
-              <span className="font-semibold text-emerald-600">+{formatCurrency(watchedValues.monthlyRent || 0)}</span>
+              <span className="font-semibold" style={{ color: "var(--color-secondary)" }}>+{formatCurrency(watchedValues.monthlyRent || 0)}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border/40">
               <span className="text-sm text-muted-foreground">Management Fee</span>
-              <span className="font-semibold text-rose-500">-{formatCurrency(results.monthlyManagementFee)}</span>
+              <span className="font-semibold" style={{ color: "var(--color-error)" }}>-{formatCurrency(results.monthlyManagementFee)}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border/40">
               <span className="text-sm text-muted-foreground">Maintenance</span>
-              <span className="font-semibold text-rose-500">-{formatCurrency(results.monthlyMaintenanceCost)}</span>
+              <span className="font-semibold" style={{ color: "var(--color-error)" }}>-{formatCurrency(results.monthlyMaintenanceCost)}</span>
             </div>
             <div className="flex justify-between items-center py-3 bg-secondary/50 rounded-lg px-3 -mx-3">
               <span className="font-semibold">Net Cash Flow</span>
-              <span className={`text-lg font-bold ${results.isCashFlowPositive ? "text-emerald-600" : "text-rose-500"}`}>
+              <span className="text-lg font-bold" style={{ color: results.isCashFlowPositive ? "var(--color-secondary)" : "var(--color-error)" }}>
                 {formatCurrency(results.monthlyCashFlow)}
               </span>
             </div>
@@ -318,9 +330,10 @@ function ROICalculator() {
         <button
           type="button"
           onClick={() => setShowMobileResults(true)}
-          className={`w-full py-4 px-6 rounded-xl font-semibold text-white shadow-lg flex items-center justify-between ${
-            results.isCashFlowPositive ? "bg-emerald-500" : "bg-rose-500"
-          }`}
+          className="w-full py-4 px-6 rounded-xl font-semibold text-white shadow-lg flex items-center justify-between"
+          style={{
+            backgroundColor: results.isCashFlowPositive ? "var(--color-secondary)" : "var(--color-error)"
+          }}
         >
           <span>Monthly Cash Flow</span>
           <span className="text-xl">{formatCurrency(results.monthlyCashFlow)}</span>
@@ -343,7 +356,7 @@ function ROICalculator() {
                 Close
               </button>
             </div>
-            <p className={`text-3xl font-bold ${results.isCashFlowPositive ? "text-emerald-600" : "text-rose-500"}`}>
+            <p className="text-3xl font-bold" style={{ color: results.isCashFlowPositive ? "var(--color-secondary)" : "var(--color-error)" }}>
               {formatCurrency(results.monthlyCashFlow)}
             </p>
             <div className="space-y-2 text-sm text-muted-foreground">
