@@ -1,0 +1,56 @@
+.roi-calculator-page {
+  min-height: 100vh;
+}
+
+.roi-hero {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-light) 100%);
+  color: var(--color-text-white);
+  padding: var(--spacing-4xl) 0;
+  text-align: center;
+}
+
+.roi-hero h1 {
+  color: var(--color-text-white);
+  font-size: var(--font-size-5xl);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-lg);
+}
+
+.roi-hero p {
+  font-size: var(--font-size-lg);
+  margin-bottom: 0;
+  opacity: 0.9;
+  line-height: var(--line-height-relaxed);
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.roi-calculator-section {
+  padding: var(--spacing-4xl) 0;
+  background-color: var(--color-bg-light);
+}
+
+@media (max-width: 768px) {
+  .roi-hero {
+    padding: var(--spacing-2xl) 0;
+  }
+
+  .roi-hero h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .roi-calculator-section {
+    padding: var(--spacing-2xl) 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .roi-hero h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .roi-hero p {
+    font-size: var(--font-size-base);
+  }
+}
