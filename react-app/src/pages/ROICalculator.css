@@ -38,7 +38,7 @@
 }
 
 /* Dark mode variables */
-. dark {
+.dark {
   --roi-bg: #111827;
   --roi-card-bg: #1f2937;
   --roi-border:  #374151;
@@ -50,7 +50,7 @@
    MAIN CONTAINER
    ========================================= */
 
-. roi-calculator-page {
+.roi-calculator-page {
   min-height: 100vh;
   background-color: var(--roi-bg);
   padding: 2rem 1rem;
@@ -106,7 +106,7 @@
   }
 }
 
-. roi-title {
+.roi-title {
   font-size: 2.5rem;
   font-weight:  700;
   color: var(--roi-text);
@@ -126,7 +126,7 @@
    CURRENCY TOGGLE
    ========================================= */
 
-. roi-currency-toggle {
+.roi-currency-toggle {
   display: flex;
   justify-content: center;
   gap: 1rem;
@@ -145,7 +145,7 @@
   color: var(--roi-text-muted);
 }
 
-.roi-currency-btn. active {
+.roi-currency-btn.active {
   background-color: var(--roi-teal-500);
   color: white;
   border-color: var(--roi-teal-500);
@@ -283,7 +283,7 @@
   margin-bottom: 1.5rem;
 }
 
-. roi-slider-header {
+.roi-slider-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -361,7 +361,7 @@
   margin-bottom: 1.5rem;
 }
 
-. roi-result-card {
+.roi-result-card {
   border-radius: var(--roi-radius);
   padding: 1.5rem;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
@@ -379,12 +379,12 @@
   background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
 }
 
-.roi-result-card. teal {
+.roi-result-card.teal {
   background:  linear-gradient(135deg, var(--roi-teal-500) 0%, var(--roi-teal-600) 100%);
   color: white;
 }
 
-. roi-result-card.navy {
+.roi-result-card.navy {
   background: linear-gradient(135deg, var(--roi-navy-800) 0%, var(--roi-navy-900) 100%);
   color: white;
 }
@@ -429,7 +429,7 @@
   opacity: 0.8;
 }
 
-. roi-result-card.light .roi-result-value {
+.roi-result-card.light .roi-result-value {
   background: linear-gradient(135deg, var(--roi-teal-500) 0%, var(--roi-teal-600) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -484,7 +484,7 @@
   color: #6ee7b7;
 }
 
-. roi-stat-value.negative {
+.roi-stat-value.negative {
   color: #fca5a5;
 }
 
@@ -531,7 +531,7 @@
     grid-template-columns: 1fr;
   }
   
-  .roi-result-card. light {
+  .roi-result-card.light {
     grid-column: span 1;
   }
   
@@ -558,7 +558,7 @@
    DARK MODE
    ========================================= */
 
-. dark . roi-calculator-page {
+.dark .roi-calculator-page {
   background-color: var(--roi-gray-900);
 }
 
@@ -611,7 +611,7 @@
   color: var(--roi-text-muted);
 }
 
-.dark .roi-result-card. light {
+.dark .roi-result-card.light {
   background:  var(--roi-card-bg);
   border-color: var(--roi-border);
   color: var(--roi-text);
