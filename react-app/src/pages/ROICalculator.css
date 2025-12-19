@@ -28,24 +28,22 @@
   --roi-radius:  1rem;
   --roi-radius-sm: 0.5rem;
   --roi-radius-lg: 1.5rem;
+  
+  /* Light mode variables */
+  --roi-bg:  #f9fafb;
+  --roi-card-bg: #ffffff;
+  --roi-border:  #e5e7eb;
+  --roi-text:  #1f2937;
+  --roi-text-muted: #6b7280;
 }
 
 /* Dark mode variables */
 . dark {
-  --roi-bg:  #111827;
+  --roi-bg: #111827;
   --roi-card-bg: #1f2937;
   --roi-border:  #374151;
-  --roi-text:  #f9fafb;
+  --roi-text: #f9fafb;
   --roi-text-muted: #9ca3af;
-}
-
-/* Light mode variables */
-: root {
-  --roi-bg: #f9fafb;
-  --roi-card-bg: #ffffff;
-  --roi-border:  #e5e7eb;
-  --roi-text: #1f2937;
-  --roi-text-muted: #6b7280;
 }
 
 /* =========================================
@@ -104,13 +102,13 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity:  0.5;
   }
 }
 
-.roi-title {
+. roi-title {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight:  700;
   color: var(--roi-text);
   margin-bottom: 0.75rem;
   line-height: 1.2;
@@ -136,7 +134,7 @@
 }
 
 .roi-currency-btn {
-  padding:  0.75rem 2rem;
+  padding: 0.75rem 2rem;
   border: 2px solid transparent;
   border-radius: var(--roi-radius-sm);
   font-size: 1rem;
@@ -182,7 +180,7 @@
   flex-direction: column;
   gap: 1.5rem;
   position: sticky;
-  top:  2rem;
+  top: 2rem;
 }
 
 /* =========================================
@@ -194,12 +192,12 @@
   border: 1px solid var(--roi-border);
   border-radius: var(--roi-radius);
   padding: 2rem;
-  box-shadow:  0 1px 3px 0 rgb(0 0 0 / 0.05);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
   transition: box-shadow 0.2s;
 }
 
 .roi-card:hover {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  box-shadow:  0 4px 6px -1px rgb(0 0 0 / 0.05);
 }
 
 .roi-card-header {
@@ -212,9 +210,9 @@
 }
 
 .roi-card-icon {
-  width: 2.5rem;
+  width: 2. 5rem;
   height: 2.5rem;
-  background: linear-gradient(135deg, var(--roi-teal-500) 0%, var(--roi-teal-600) 100%);
+  background:  linear-gradient(135deg, var(--roi-teal-500) 0%, var(--roi-teal-600) 100%);
   border-radius: 0.625rem;
   display: flex;
   align-items: center;
@@ -238,7 +236,7 @@
   margin-bottom: 1.5rem;
 }
 
-.roi-input-group: last-child {
+.roi-input-group:last-child {
   margin-bottom: 0;
 }
 
@@ -251,7 +249,7 @@
 }
 
 .roi-input-wrapper {
-  position: relative;
+  position:  relative;
 }
 
 .roi-input {
@@ -273,7 +271,7 @@
   box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
 }
 
-.roi-input:: placeholder {
+.roi-input::placeholder {
   color: var(--roi-gray-400);
 }
 
@@ -315,7 +313,7 @@
 }
 
 .roi-slider-track {
-  height: 100%;
+  height:  100%;
   background:  linear-gradient(90deg, var(--roi-teal-500) 0%, var(--roi-teal-600) 100%);
   border-radius: 9999px;
   position: relative;
@@ -337,7 +335,7 @@
 }
 
 .roi-slider-thumb:hover {
-  transform:  translateY(-50%) scale(1.1);
+  transform: translateY(-50%) scale(1.1);
 }
 
 .roi-slider-thumb:active {
@@ -381,8 +379,8 @@
   background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
 }
 
-.roi-result-card.teal {
-  background: linear-gradient(135deg, var(--roi-teal-500) 0%, var(--roi-teal-600) 100%);
+.roi-result-card. teal {
+  background:  linear-gradient(135deg, var(--roi-teal-500) 0%, var(--roi-teal-600) 100%);
   color: white;
 }
 
@@ -393,7 +391,7 @@
 
 .roi-result-card.light {
   background: var(--roi-card-bg);
-  border:  2px solid var(--roi-border);
+  border: 2px solid var(--roi-border);
   color: var(--roi-text);
   grid-column: span 2;
 }
@@ -406,7 +404,7 @@
 }
 
 .roi-result-icon {
-  width:  1.25rem;
+  width: 1.25rem;
   height: 1.25rem;
   opacity: 0.9;
 }
@@ -446,7 +444,7 @@
   background:  linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border-radius: var(--roi-radius);
   padding: 2rem;
-  box-shadow:  0 4px 6px -1px rgb(0 0 0 / 0.1);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   color: white;
 }
 
@@ -490,7 +488,7 @@
   color: #fca5a5;
 }
 
-. roi-chart-canvas {
+.roi-chart-canvas {
   min-height: 250px;
   background: rgba(255, 255, 255, 0.03);
   border-radius: var(--roi-radius-sm);
@@ -501,7 +499,7 @@
    RESPONSIVE DESIGN
    ========================================= */
 
-@media (max-width:  1200px) {
+@media (max-width: 1200px) {
   .roi-calculator-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -525,7 +523,7 @@
     font-size: 1rem;
   }
   
-  . roi-card {
+  .roi-card {
     padding: 1.5rem;
   }
   
@@ -552,7 +550,7 @@
   }
   
   .roi-currency-btn {
-    width:  100%;
+    width: 100%;
   }
 }
 
@@ -588,7 +586,7 @@
   color: var(--roi-text);
 }
 
-.dark .roi-input: focus {
+.dark .roi-input:focus {
   background-color: var(--roi-card-bg);
 }
 
